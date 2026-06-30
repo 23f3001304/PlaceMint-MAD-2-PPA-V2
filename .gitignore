@@ -1,0 +1,24 @@
+# Python / Flask
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+venv/
+.venv/
+
+# Secrets and local runtime data (DB + admin created at startup)
+.env
+backend/.env
+backend/instance/
+*.db
+*.sqlite3
+
+# Celery / Redis
+celerybeat-schedule*
+dump.rdb
+*.pid
+
+# Node / Vue / Vite
+node_modules/
+frontend/dist/
+frontend/.vite/
