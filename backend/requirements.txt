@@ -1,0 +1,9 @@
+# Placement Portal Application - backend dependencies.
+# Only mandated frameworks + their standard Flask companions.
+Flask==3.0.3                 # mandated: API framework
+Flask-SQLAlchemy==3.1.1      # standard Flask <-> SQLite ORM integration
+Flask-JWT-Extended==4.6.0    # required JWT token auth
+Flask-Caching==2.3.0         # required Redis caching layer
+redis==5.0.8                 # Redis client (cache + Celery broker)
+celery==5.4.0                # mandated: batch/scheduled jobs
+python-dotenv==1.0.1         # externalise secrets/config via .env
