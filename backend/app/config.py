@@ -21,8 +21,10 @@ def _default_sqlite_uri() -> str:
 class BaseConfig:
     """Settings shared by every environment."""
 
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-production-0123456789")
+    JWT_SECRET_KEY = os.getenv(
+        "JWT_SECRET_KEY", "dev-jwt-secret-change-in-production-0123456789"
+    )
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=12)
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or _default_sqlite_uri()
