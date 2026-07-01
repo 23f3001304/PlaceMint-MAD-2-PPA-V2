@@ -67,6 +67,16 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
 .surface-card { background: var(--ppa-surface); border: 1px solid var(--ppa-border); border-radius: var(--ppa-radius); }
 .bg-grid-dots { background-image: radial-gradient(rgba(20, 17, 15, 0.14) 1px, transparent 1px); background-size: 16px 16px; }
 
+/* Woven "silk" texture: fine diagonal cross-hatch + soft green corner glow.
+   Sets colour + pattern together so a solid background can't wipe it. */
+.silk-bg {
+  background-color: #f4efe6;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(20, 17, 15, 0.032) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-45deg, rgba(20, 17, 15, 0.032) 0 1px, transparent 1px 14px),
+    radial-gradient(135% 90% at 100% 0%, rgba(31, 107, 58, 0.09), transparent 55%);
+}
+
 /* Status badges (tinted, no purple) */
 .status-badge { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 999px; text-transform: capitalize; border: 1px solid transparent; }
 .st-pending, .st-applied { background: #fbecc8; color: #7a5a12; border-color: #e6d3a3; }
@@ -78,6 +88,14 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
 /* Motion + scrollbar */
 @keyframes ppa-fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .motion-fade-up { animation: ppa-fade-up 0.28s cubic-bezier(0.2, 0, 0, 1) both; }
+
+/* Route + swap transitions */
+.page-enter-active, .page-leave-active { transition: opacity 0.28s ease, transform 0.28s ease; }
+.page-enter-from { opacity: 0; transform: translateY(8px); }
+.page-leave-to { opacity: 0; transform: translateY(-8px); }
+.swap-enter-active, .swap-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.swap-enter-from { opacity: 0; transform: translateX(10px); }
+.swap-leave-to { opacity: 0; transform: translateX(-10px); }
 ::-webkit-scrollbar { width: 9px; height: 9px; }
 ::-webkit-scrollbar-thumb { background: rgba(20, 17, 15, 0.22); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(31, 107, 58, 0.6); }

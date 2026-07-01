@@ -17,7 +17,12 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      scss: { quietDeps: true },
+      scss: {
+        // Bootstrap 5.3 still ships @import-based Sass; silence the Dart Sass
+        // deprecation noise until Bootstrap 6 moves to the module system.
+        quietDeps: true,
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'mixed-decls'],
+      },
     },
   },
 })

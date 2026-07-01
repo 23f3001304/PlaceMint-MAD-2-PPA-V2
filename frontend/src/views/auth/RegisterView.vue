@@ -44,21 +44,25 @@ async function submit() {
 </script>
 
 <template>
-  <AuthLayout title="Create your account" subtitle="Register as a student or a company.">
-    <div class="btn-group w-100 mb-4" role="group" aria-label="Account type">
-      <button type="button" class="btn" :class="role === 'student' ? 'btn-3d-accent' : 'btn-outline-secondary'" @click="role = 'student'">
+  <AuthLayout title="Create your account" subtitle="Register as a student or a company." wide>
+    <div class="role-toggle mb-4">
+      <button type="button" class="role-btn" :class="{ active: role === 'student' }" @click="role = 'student'">
         Student
       </button>
-      <button type="button" class="btn" :class="role === 'company' ? 'btn-3d-accent' : 'btn-outline-secondary'" @click="role = 'company'">
+      <button type="button" class="role-btn" :class="{ active: role === 'company' }" @click="role = 'company'">
         Company
       </button>
     </div>
 
     <form novalidate @submit.prevent="submit">
-      <FormField id="remail" v-model="form.email" label="Email" type="email" required autocomplete="email" />
-      <FormField id="rpass" v-model="form.password" label="Password" type="password" hint="At least 6 characters" required autocomplete="new-password" />
-      <StudentFields v-if="role === 'student'" :form="form" />
-      <CompanyFields v-else :form="form" />
+      <div class="row gx-3">
+        <div class="col-md-6"><FormField id="remail" v-model="form.email" label="Email" type="email" required autocomplete="email" /></div>
+        <div class="col-md-6"><FormField id="rpass" v-model="form.password" label="Password" type="password" hint="At least 6 characters" required autocomplete="new-password" /></div>
+      </div>
+      <Transition name="swap" mode="out-in">
+        <StudentFields v-if="role === 'student'" key="student" :form="form" />
+        <CompanyFields v-else key="company" :form="form" />
+      </Transition>
       <button class="btn btn-3d-accent w-100 py-2 mt-2" :disabled="busy">
         {{ busy ? 'Creating...' : 'Create account' }}
       </button>
@@ -69,3 +73,17 @@ async function submit() {
     </p>
   </AuthLayout>
 </template>
+
+<style scoped>
+.role-toggle {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem;
+  background: var(--ppa-surface-sunk); padding: 0.3rem; border-radius: 999px;
+}
+.role-btn {
+  border: 0; background: transparent; border-radius: 999px; padding: 0.5rem;
+  font-weight: 600; color: var(--ppa-muted); transition: all 0.18s ease;
+}
+.role-btn.active { background: var(--ppa-accent); color: #fff; box-shadow: 0 2px 6px rgba(15, 70, 36, 0.3); }
+.role-btn:not(.active):hover { color: var(--ppa-ink); }
+</style>
+
