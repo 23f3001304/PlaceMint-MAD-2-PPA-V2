@@ -47,6 +47,9 @@ const routes = [
     meta: { roles: ['student'] },
     children: [
       { path: '', name: 'student-dashboard', component: () => import('../views/student/StudentDashboard.vue') },
+      { path: 'drives', name: 'student-drives', component: () => import('../views/student/StudentDrives.vue') },
+      { path: 'applications', name: 'student-applications', component: () => import('../views/student/StudentApplications.vue') },
+      { path: 'profile', name: 'student-profile', component: () => import('../views/student/StudentProfile.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

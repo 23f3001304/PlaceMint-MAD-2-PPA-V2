@@ -9,14 +9,17 @@ def register_api(app):
     _register_core(app)
     _register_admin(app)
     _register_company(app)
+    _register_student(app)
 
 
 def _register_core(app):
     from app.api.auth.routes import auth_bp
+    from app.api.documents import documents_bp
     from app.api.health import health_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
+    app.register_blueprint(documents_bp, url_prefix="/api/documents")
 
 
 def _register_admin(app):
@@ -43,3 +46,13 @@ def _register_company(app):
     app.register_blueprint(company_overview_bp, url_prefix="/api/company")
     app.register_blueprint(company_drives_bp, url_prefix="/api/company/drives")
     app.register_blueprint(company_apps_bp, url_prefix="/api/company/applications")
+
+
+def _register_student(app):
+    from app.api.student.applications import student_apps_bp
+    from app.api.student.drives import student_drives_bp
+    from app.api.student.profile import student_profile_bp
+
+    app.register_blueprint(student_profile_bp, url_prefix="/api/student/profile")
+    app.register_blueprint(student_drives_bp, url_prefix="/api/student/drives")
+    app.register_blueprint(student_apps_bp, url_prefix="/api/student/applications")
