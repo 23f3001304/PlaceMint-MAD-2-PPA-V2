@@ -27,6 +27,7 @@ class Application(db.Model, TimestampMixin):
         db.String(20), default=ApplicationStatus.APPLIED, nullable=False, index=True
     )
     interview_at = db.Column(db.DateTime)
+    interview_mode = db.Column(db.String(40))  # e.g. "In-person", "Online"
     remarks = db.Column(db.String(255))
 
     student = db.relationship("StudentProfile", back_populates="applications")
@@ -40,6 +41,7 @@ class Application(db.Model, TimestampMixin):
             "status": self.status,
             "applied_at": self.applied_at.isoformat() if self.applied_at else None,
             "interview_at": self.interview_at.isoformat() if self.interview_at else None,
+            "interview_mode": self.interview_mode,
             "remarks": self.remarks,
         }
         if include_drive and self.drive:

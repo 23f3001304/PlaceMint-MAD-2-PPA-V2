@@ -25,6 +25,9 @@ const routes = [
     meta: { roles: ['admin'] },
     children: [
       { path: '', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboard.vue') },
+      { path: 'companies', name: 'admin-companies', component: () => import('../views/admin/AdminCompanies.vue') },
+      { path: 'students', name: 'admin-students', component: () => import('../views/admin/AdminStudents.vue') },
+      { path: 'drives', name: 'admin-drives', component: () => import('../views/admin/AdminDrives.vue') },
     ],
   },
   {

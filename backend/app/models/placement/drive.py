@@ -12,6 +12,7 @@ class PlacementDrive(db.Model, TimestampMixin):
         db.Integer, db.ForeignKey("company_profiles.id"), nullable=False, index=True
     )
 
+    drive_name = db.Column(db.String(160))  # campaign name, e.g. "Summer SDE 2026"
     job_title = db.Column(db.String(160), nullable=False, index=True)
     job_description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(120))
@@ -39,6 +40,7 @@ class PlacementDrive(db.Model, TimestampMixin):
         data = {
             "id": self.id,
             "company_id": self.company_id,
+            "drive_name": self.drive_name,
             "job_title": self.job_title,
             "job_description": self.job_description,
             "location": self.location,

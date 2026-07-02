@@ -38,3 +38,11 @@ export const post = (path, body, opts) => request(path, { ...opts, method: 'POST
 export const patch = (path, body, opts) => request(path, { ...opts, method: 'PATCH', body })
 export const del = (path, opts) => request(path, { ...opts, method: 'DELETE' })
 export { TOKEN_KEY }
+
+// Build a query string from an object, dropping empty/null values.
+export function qs(params) {
+  if (!params) return ''
+  const entries = Object.entries(params).filter(([, v]) => v !== '' && v != null)
+  const encoded = new URLSearchParams(entries).toString()
+  return encoded ? `?${encoded}` : ''
+}
