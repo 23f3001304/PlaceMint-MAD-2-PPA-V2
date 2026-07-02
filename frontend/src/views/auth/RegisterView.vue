@@ -7,8 +7,8 @@ import { homeFor } from '../../router/guards'
 import { toastError, toastSuccess } from '../../store/ui'
 import AuthLayout from './AuthLayout.vue'
 import FormField from '../../components/forms/FormField.vue'
-import StudentFields from '../../components/forms/StudentFields.vue'
-import CompanyFields from '../../components/forms/CompanyFields.vue'
+import StudentFields from '../../components/forms/registration/StudentFields.vue'
+import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
 
 const role = ref('student')
 const busy = ref(false)

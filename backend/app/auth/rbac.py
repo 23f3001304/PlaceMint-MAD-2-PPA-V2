@@ -41,3 +41,26 @@ def role_required(*roles: str):
         return wrapper
 
     return decorator
+
+
+def current_company():
+    """The signed-in user's company profile (assumes a company-guarded route)."""
+    user = current_user()
+    if user is None or user.company_profile is None:
+        raise ForbiddenError("Company profile required")
+    return user.company_profile
+
+
+def current_student():
+    user = current_user()
+    if user is None or user.student_profile is None:
+        raise ForbiddenError("Student profile required")
+    return user.student_profile
+
+
+def approved_company():
+    """Guard company actions (posting/managing drives) behind admin approval."""
+    company = current_company()
+    if not company.is_approved:
+        raise ForbiddenError("Your company is awaiting admin approval")
+    return company

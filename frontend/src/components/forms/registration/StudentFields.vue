@@ -1,6 +1,6 @@
 <script setup>
-import FormField from './FormField.vue'
-import { BRANCHES, GRAD_YEARS } from '../../data/options'
+import FormField from '../FormField.vue'
+import { BRANCHES, GRAD_YEARS } from '../../../data/options'
 
 defineProps({ form: { type: Object, required: true } })
 </script>

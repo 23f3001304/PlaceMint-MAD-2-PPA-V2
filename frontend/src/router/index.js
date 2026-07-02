@@ -36,6 +36,9 @@ const routes = [
     meta: { roles: ['company'] },
     children: [
       { path: '', name: 'company-dashboard', component: () => import('../views/company/CompanyDashboard.vue') },
+      { path: 'drives', name: 'company-drives', component: () => import('../views/company/CompanyDrives.vue') },
+      { path: 'applicants', name: 'company-applicants', component: () => import('../views/company/CompanyApplicants.vue') },
+      { path: 'profile', name: 'company-profile', component: () => import('../views/company/CompanyProfile.vue') },
     ],
   },
   {

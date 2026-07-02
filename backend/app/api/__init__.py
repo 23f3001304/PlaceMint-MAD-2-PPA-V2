@@ -8,6 +8,7 @@ one place makes the app's surface easy to scan.
 def register_api(app):
     _register_core(app)
     _register_admin(app)
+    _register_company(app)
 
 
 def _register_core(app):
@@ -32,3 +33,13 @@ def _register_admin(app):
     app.register_blueprint(admin_users_bp, url_prefix="/api/admin/users")
     app.register_blueprint(admin_drives_bp, url_prefix="/api/admin/drives")
     app.register_blueprint(admin_apps_bp, url_prefix="/api/admin/applications")
+
+
+def _register_company(app):
+    from app.api.company.applications import company_apps_bp
+    from app.api.company.drives import company_drives_bp
+    from app.api.company.overview import company_overview_bp
+
+    app.register_blueprint(company_overview_bp, url_prefix="/api/company")
+    app.register_blueprint(company_drives_bp, url_prefix="/api/company/drives")
+    app.register_blueprint(company_apps_bp, url_prefix="/api/company/applications")

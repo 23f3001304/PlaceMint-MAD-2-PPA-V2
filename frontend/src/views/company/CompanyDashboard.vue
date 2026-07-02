@@ -1,22 +1,45 @@
 <script setup>
-import { authState } from '../../store/auth'
+import { onMounted, ref } from 'vue'
+
+import * as companyApi from '../../api/endpoints/company'
+import { authState, setProfile } from '../../store/auth'
+import PageHeader from '../../components/layout/PageHeader.vue'
+import StatTile from '../../components/ui/StatTile.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
+
+const stats = ref({})
+const approved = ref(authState.profile?.approval_status === 'approved')
+
+onMounted(async () => {
+  const p = await companyApi.profile()
+  setProfile(p.data)
+  approved.value = p.data.approval_status === 'approved'
+  stats.value = (await companyApi.stats()).data
+})
 </script>
 
 <template>
   <div class="motion-fade-up">
-    <h1 class="h3 mb-1">{{ authState.profile?.company_name }}</h1>
-    <p class="text-muted mb-3">Company dashboard</p>
+    <PageHeader :title="authState.profile?.company_name" subtitle="Company dashboard" />
 
-    <div class="surface-card p-4">
-      <div class="d-flex align-items-center gap-2 mb-2">
+    <div v-if="!approved" class="surface-card p-4 mb-4 pending-note">
+      <div class="d-flex align-items-center gap-2 mb-1">
         <span class="fw-semibold">Approval status</span>
         <StatusBadge :status="authState.profile?.approval_status" />
       </div>
-      <p v-if="authState.profile?.approval_status !== 'approved'" class="text-muted mb-0">
-        Your registration is awaiting admin approval. You can post job drives once approved.
-      </p>
-      <p v-else class="text-muted mb-0">You are approved. Post drives from the sidebar.</p>
+      <p class="text-muted mb-0">You can post placement drives once the cell approves your company.</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-6 col-lg-3"><StatTile label="Drives" :value="stats.drives ?? 0" icon="briefcase" /></div>
+      <div class="col-6 col-lg-3"><StatTile label="Active drives" :value="stats.active_drives ?? 0" icon="briefcase" /></div>
+      <div class="col-6 col-lg-3"><StatTile label="Applications" :value="stats.applications ?? 0" icon="file" /></div>
+      <div class="col-6 col-lg-3"><StatTile label="Shortlisted" :value="stats.shortlisted ?? 0" icon="users" /></div>
+      <div class="col-6 col-lg-3"><StatTile label="Placed" :value="stats.placed ?? 0" icon="award" /></div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.pending-note { background: #fbecc8; border-color: #e6d3a3; }
+</style>
