@@ -3,6 +3,7 @@ import { onMounted, reactive, ref, watch } from 'vue'
 
 import * as companyApi from '../../api/endpoints/company'
 import { useAsync } from '../../composables/useAsync'
+import { useExport } from '../../composables/useExport'
 import { toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import DataTable from '../../components/ui/DataTable.vue'
@@ -11,6 +12,7 @@ import PageHeader from '../../components/layout/PageHeader.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
+const { exporting, runExport } = useExport()
 const drives = ref([])
 const selectedDrive = ref('')
 const applicants = ref([])
@@ -61,6 +63,9 @@ async function saveReview() {
         <select v-model="selectedDrive" class="form-select" style="width: auto">
           <option v-for="d in drives" :key="d.id" :value="d.id">{{ d.job_title }} ({{ d.applicant_count }})</option>
         </select>
+        <button class="btn btn-outline-secondary" :disabled="exporting" @click="runExport">
+          {{ exporting ? 'Exporting...' : 'Export CSV' }}
+        </button>
       </template>
     </PageHeader>
 

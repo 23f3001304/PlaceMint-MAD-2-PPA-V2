@@ -4,12 +4,14 @@ import { onMounted, ref } from 'vue'
 import * as studentApi from '../../api/endpoints/student'
 import { openDoc } from '../../api/client'
 import { useAsync } from '../../composables/useAsync'
+import { useExport } from '../../composables/useExport'
 import { toastError } from '../../store/ui'
 import DataTable from '../../components/ui/DataTable.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
+const { exporting, runExport } = useExport()
 const apps = ref([])
 const placements = ref([])
 
@@ -37,7 +39,13 @@ async function openOffer(p) {
 
 <template>
   <div class="motion-fade-up">
-    <PageHeader title="My applications" subtitle="Track status, interviews and feedback" />
+    <PageHeader title="My applications" subtitle="Track status, interviews and feedback">
+      <template #actions>
+        <button class="btn btn-outline-secondary" :disabled="exporting" @click="runExport">
+          {{ exporting ? 'Exporting...' : 'Export CSV' }}
+        </button>
+      </template>
+    </PageHeader>
 
     <div v-if="placements.length" class="surface-card p-3 mb-4">
       <h2 class="h6 mb-2">Placements</h2>

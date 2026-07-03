@@ -3,6 +3,7 @@
 Import order matters only in that all classes must be imported before
 `db.create_all()` runs; the app factory imports this package for that reason.
 """
+from app.models.export_job import ExportJob
 from app.models.placement.application import Application
 from app.models.placement.drive import PlacementDrive
 from app.models.placement.placement import Placement
@@ -17,4 +18,5 @@ __all__ = [
     "PlacementDrive",
     "Application",
     "Placement",
+    "ExportJob",
 ]

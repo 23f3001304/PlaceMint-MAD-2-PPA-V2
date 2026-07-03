@@ -15,11 +15,13 @@ def register_api(app):
 def _register_core(app):
     from app.api.auth.routes import auth_bp
     from app.api.documents import documents_bp
+    from app.api.exports import exports_bp
     from app.api.health import health_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(documents_bp, url_prefix="/api/documents")
+    app.register_blueprint(exports_bp, url_prefix="/api/exports")
 
 
 def _register_admin(app):

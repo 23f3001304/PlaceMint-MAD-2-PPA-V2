@@ -37,6 +37,9 @@ class BaseConfig:
 
     # Celery broker / result backend.
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    # Default: real Celery + Redis. Set CELERY_TASK_ALWAYS_EAGER=1 to run jobs
+    # inline (handy for a quick demo without starting a worker).
+    CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", "0") == "1"
 
     # Pre-seeded admin.
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@ppa.local")
@@ -70,6 +73,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     CACHE_TYPE = "SimpleCache"
+    CELERY_TASK_ALWAYS_EAGER = True  # run export jobs inline, no broker needed
 
 
 _CONFIGS = {

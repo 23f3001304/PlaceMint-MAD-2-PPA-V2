@@ -59,3 +59,20 @@ export async function openDoc(path) {
   window.open(url, '_blank')
   setTimeout(() => URL.revokeObjectURL(url), 60000)
 }
+
+// Fetch an authenticated file and trigger a download with a filename.
+export async function downloadDoc(path, filename) {
+  const token = localStorage.getItem(TOKEN_KEY)
+  const res = await fetch(BASE + path, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!res.ok) throw new ApiError('Download failed', res.status)
+  const url = URL.createObjectURL(await res.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename || 'download'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 60000)
+}

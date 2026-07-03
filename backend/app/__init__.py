@@ -23,6 +23,10 @@ def create_app(config_name: str | None = None) -> Flask:
 
     from app import models  # noqa: F401  (imported so all tables register)
 
+    from app.tasks import make_celery
+
+    make_celery(app)
+
     from app.api import register_api
     from app.api.errors import register_error_handlers
     from app.auth.tokens import register_jwt_handlers
