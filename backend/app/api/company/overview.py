@@ -3,6 +3,7 @@ from flask import Blueprint, request
 
 from app.api.company.schema import clean_company_profile
 from app.auth.rbac import current_company, role_required
+from app.caching.keys import STATS_TTL, company_stats_key, get_or_set
 from app.extensions import db
 from app.models.constants import Role
 from app.services.stats.company_stats import company_dashboard
@@ -14,7 +15,8 @@ company_overview_bp = Blueprint("company_overview", __name__)
 @company_overview_bp.get("/stats")
 @role_required(Role.COMPANY)
 def stats():
-    return ok(company_dashboard(current_company()))
+    company = current_company()
+    return ok(get_or_set(company_stats_key(company.id), STATS_TTL, lambda: company_dashboard(company)))
 
 
 @company_overview_bp.get("/profile")

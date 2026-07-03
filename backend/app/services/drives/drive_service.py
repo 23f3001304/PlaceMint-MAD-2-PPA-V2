@@ -1,4 +1,5 @@
 """Placement-drive lifecycle: company CRUD + admin approval/close."""
+from app.caching.keys import invalidate_company
 from app.extensions import db
 from app.models.constants import DriveStatus
 from app.models.placement.drive import PlacementDrive
@@ -44,6 +45,7 @@ def create_drive(company, data: dict) -> PlacementDrive:
     _apply(drive, data)
     db.session.add(drive)
     db.session.commit()
+    invalidate_company(company.id)
     return drive
 
 
@@ -51,6 +53,7 @@ def update_drive(company, drive_id: int, data: dict) -> PlacementDrive:
     drive = get_owned_drive(company, drive_id)
     _apply(drive, data)
     db.session.commit()
+    invalidate_company(company.id)
     return drive
 
 
@@ -63,6 +66,7 @@ def company_set_status(company, drive_id: int, status: str) -> PlacementDrive:
         raise ForbiddenError("Drive must be admin-approved first")
     drive.status = status
     db.session.commit()
+    invalidate_company(company.id)
     return drive
 
 
@@ -72,6 +76,7 @@ def set_drive_status(drive_id: int, status: str) -> PlacementDrive:
     drive = get_drive(drive_id)
     drive.status = status
     db.session.commit()
+    invalidate_company(drive.company_id)
     return drive
 
 
@@ -80,5 +85,8 @@ def close_drive(drive_id: int) -> PlacementDrive:
 
 
 def delete_drive(drive_id: int) -> None:
-    db.session.delete(get_drive(drive_id))
+    drive = get_drive(drive_id)
+    company_id = drive.company_id
+    db.session.delete(drive)
     db.session.commit()
+    invalidate_company(company_id)

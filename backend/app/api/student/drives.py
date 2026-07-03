@@ -6,6 +6,7 @@ non-blacklisted company are ever visible here.
 from flask import Blueprint, request
 
 from app.auth.rbac import current_student, role_required
+from app.caching.keys import LIST_TTL, get_or_set, organizations_key
 from app.models.constants import ApprovalStatus, DriveStatus, Role
 from app.models.placement.drive import PlacementDrive
 from app.models.profiles.company import CompanyProfile
@@ -67,18 +68,23 @@ def drive_detail(drive_id):
     return ok(item)
 
 
-@student_drives_bp.get("/organizations")
-@role_required(Role.STUDENT)
-def organizations():
-    query = CompanyProfile.query.filter_by(approval_status=ApprovalStatus.APPROVED)
-    if (q := request.args.get("q", "").strip()):
-        query = query.filter(CompanyProfile.company_name.ilike(f"%{q}%"))
+def _all_organizations():
     out = []
+    query = CompanyProfile.query.filter_by(approval_status=ApprovalStatus.APPROVED)
     for company in query.order_by(CompanyProfile.company_name).all():
         data = company.to_dict()
         data["open_drives"] = sum(1 for d in company.drives if d.status == DriveStatus.APPROVED)
         out.append(data)
-    return ok(out)
+    return out
+
+
+@student_drives_bp.get("/organizations")
+@role_required(Role.STUDENT)
+def organizations():
+    orgs = get_or_set(organizations_key(), LIST_TTL, _all_organizations)
+    if (q := request.args.get("q", "").strip().lower()):
+        orgs = [o for o in orgs if q in (o["company_name"] or "").lower()]
+    return ok(orgs)
 
 
 @student_drives_bp.get("/organizations/<int:company_id>")

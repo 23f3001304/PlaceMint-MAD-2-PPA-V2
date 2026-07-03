@@ -63,3 +63,16 @@ class TestPlacementRules(AppTestCase):
         self.assertEqual(len(placements), 1)
         history = self.client.get("/api/student/applications", headers=stu).get_json()["data"]
         self.assertEqual(history[0]["status"], "placed")
+
+
+class TestCaching(AppTestCase):
+    def _companies(self, admin):
+        return self.client.get("/api/admin/stats", headers=admin).get_json()["data"]["companies"]
+
+    def test_admin_stats_cached_then_invalidated(self):
+        admin = self.admin()
+        first = self._companies(admin)  # cached
+        self.register_company()
+        self.assertEqual(self._companies(admin), first)  # cache hit: still stale
+        self.approve_first_company()  # a write that invalidates the cache
+        self.assertEqual(self._companies(admin), first + 1)  # refreshed

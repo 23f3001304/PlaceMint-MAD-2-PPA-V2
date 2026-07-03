@@ -5,6 +5,7 @@ from flask import Blueprint, current_app, request
 from werkzeug.utils import secure_filename
 
 from app.auth.rbac import current_student, role_required
+from app.caching.keys import STATS_TTL, get_or_set, student_stats_key
 from app.extensions import db
 from app.models.constants import Role
 from app.services.stats.student_stats import student_dashboard
@@ -27,7 +28,8 @@ def get_profile():
 @student_profile_bp.get("/stats")
 @role_required(Role.STUDENT)
 def stats():
-    return ok(student_dashboard(current_student()))
+    student = current_student()
+    return ok(get_or_set(student_stats_key(student.id), STATS_TTL, lambda: student_dashboard(student)))
 
 
 @student_profile_bp.patch("")

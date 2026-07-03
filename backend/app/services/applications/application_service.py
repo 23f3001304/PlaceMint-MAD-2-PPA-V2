@@ -4,6 +4,7 @@ The student-side `apply()` lives here too (added with the student milestone).
 """
 from datetime import date, datetime
 
+from app.caching.keys import invalidate_company, invalidate_student
 from app.extensions import db
 from app.models.constants import ApplicationStatus, DriveStatus
 from app.models.placement.application import Application
@@ -42,6 +43,8 @@ def apply(student, drive_id: int) -> Application:
     )
     db.session.add(application)
     db.session.commit()
+    invalidate_student(student.id)
+    invalidate_company(drive.company_id)
     return application
 
 
@@ -75,6 +78,8 @@ def update_application(company, app_id: int, data: dict) -> Application:
     if app.status == ApplicationStatus.PLACED:
         _ensure_placement(app)
     db.session.commit()
+    invalidate_student(app.student_id)
+    invalidate_company(company.id)
     return app
 
 
