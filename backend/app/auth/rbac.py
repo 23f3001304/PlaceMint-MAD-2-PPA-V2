@@ -9,6 +9,7 @@ from functools import wraps
 from flask import g
 from flask_jwt_extended import get_jwt, get_jwt_identity, verify_jwt_in_request
 
+from app.extensions import db
 from app.models.user import User
 from app.utils.errors import ApiError, ForbiddenError
 
@@ -16,7 +17,7 @@ from app.utils.errors import ApiError, ForbiddenError
 def current_user() -> User | None:
     if "current_user" not in g:
         identity = get_jwt_identity()
-        g.current_user = User.query.get(int(identity)) if identity is not None else None
+        g.current_user = db.session.get(User, int(identity)) if identity is not None else None
     return g.current_user
 
 
