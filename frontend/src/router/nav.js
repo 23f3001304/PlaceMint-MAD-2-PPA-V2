@@ -11,12 +11,14 @@ const NAV = {
     { to: '/company/drives', label: 'Job Drives', icon: 'briefcase' },
     { to: '/company/applicants', label: 'Applicants', icon: 'users' },
     { to: '/company/profile', label: 'Company Profile', icon: 'building' },
+    { to: '/company/ats', label: 'Resume Screener', icon: 'file' },
   ],
   student: [
     { to: '/student', label: 'Dashboard', icon: 'dashboard' },
     { to: '/student/drives', label: 'Browse Drives', icon: 'briefcase' },
     { to: '/student/applications', label: 'My Applications', icon: 'file' },
     { to: '/student/profile', label: 'My Profile', icon: 'user' },
+    { to: '/student/ats', label: 'Resume Screener', icon: 'chart' },
   ],
 }
 

@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { authState } from '../store/auth'
-import { homeFor, installGuards } from './guards'
+import { installGuards } from './guards'
 
 const AppShell = () => import('../components/layout/AppShell.vue')
 
 const routes = [
-  { path: '/', redirect: () => (authState.user ? homeFor(authState.user.role) : '/login') },
+  { path: '/', name: 'landing', component: () => import('../views/PublicLanding.vue'), meta: { public: true } },
   {
     path: '/login',
     name: 'login',
@@ -39,6 +38,7 @@ const routes = [
       { path: 'drives', name: 'company-drives', component: () => import('../views/company/CompanyDrives.vue') },
       { path: 'applicants', name: 'company-applicants', component: () => import('../views/company/CompanyApplicants.vue') },
       { path: 'profile', name: 'company-profile', component: () => import('../views/company/CompanyProfile.vue') },
+      { path: 'ats', name: 'company-ats', component: () => import('../views/ResumeScreener.vue') },
     ],
   },
   {
@@ -50,6 +50,7 @@ const routes = [
       { path: 'drives', name: 'student-drives', component: () => import('../views/student/StudentDrives.vue') },
       { path: 'applications', name: 'student-applications', component: () => import('../views/student/StudentApplications.vue') },
       { path: 'profile', name: 'student-profile', component: () => import('../views/student/StudentProfile.vue') },
+      { path: 'ats', name: 'student-ats', component: () => import('../views/ResumeScreener.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

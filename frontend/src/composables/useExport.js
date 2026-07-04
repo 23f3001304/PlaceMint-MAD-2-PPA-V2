@@ -1,7 +1,7 @@
 // Starts an async CSV export, polls until the job finishes, then downloads it.
 import { ref } from 'vue'
 
-import * as exportsApi from '../api/endpoints/exports'
+import * as exportsApi from '../api/shared/exports'
 import { toastError, toastInfo, toastSuccess } from '../store/ui'
 
 const POLL_MS = 1200
