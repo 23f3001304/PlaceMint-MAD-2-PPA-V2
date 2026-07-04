@@ -4,6 +4,7 @@ export const stats = () => get('/admin/stats')
 export const charts = () => get('/admin/stats/charts')
 
 export const companies = (params) => get('/admin/companies' + qs(params))
+export const companyDetail = (id) => get(`/admin/companies/${id}`)
 export const setCompanyApproval = (id, status) => post(`/admin/companies/${id}/approval`, { status })
 export const deleteCompany = (id) => del(`/admin/companies/${id}`)
 

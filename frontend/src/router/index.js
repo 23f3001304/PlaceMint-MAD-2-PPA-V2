@@ -53,6 +53,12 @@ const routes = [
       { path: 'ats', name: 'student-ats', component: () => import('../views/ResumeScreener.vue') },
     ],
   },
+  {
+    path: '/student/onboarding',
+    name: 'student-onboarding',
+    component: () => import('../views/StudentOnboarding.vue'),
+    meta: { roles: ['student'] },
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

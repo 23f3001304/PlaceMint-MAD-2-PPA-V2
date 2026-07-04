@@ -38,9 +38,9 @@ async function onResume(e) {
   try {
     const fd = new FormData()
     fd.append('resume', file)
-    const p = (await studentApi.uploadResume(fd)).data
-    hasResume.value = p.has_resume
-    setProfile(p)
+    const { data } = await studentApi.uploadResume(fd)
+    hasResume.value = data.has_resume
+    setProfile(data)
     toastSuccess('Resume uploaded')
   } catch (err) {
     toastError(err.message)

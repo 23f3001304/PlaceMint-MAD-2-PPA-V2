@@ -34,7 +34,7 @@ def _student(email, name, roll, branch, cgpa, year, skills):
     user = User(email=email, password_hash=PW, role=Role.STUDENT)
     user.student_profile = StudentProfile(
         name=name, roll_no=roll, branch=branch, cgpa=cgpa, grad_year=year,
-        degree="B.Tech", skills=skills,
+        degree="B.Tech", skills=skills, onboarded=True,
     )
     db.session.add(user)
     return user.student_profile

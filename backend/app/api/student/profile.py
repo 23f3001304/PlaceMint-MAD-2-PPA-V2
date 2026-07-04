@@ -46,6 +46,8 @@ def update_profile():
         student.grad_year = as_int(data.get("grad_year"), "graduation year", student.grad_year)
     if "skills" in data:
         student.skills = as_list(data.get("skills"))
+    if data.get("onboarded"):
+        student.onboarded = True
     if not student.name:
         raise ApiError("Name cannot be empty")
     db.session.commit()

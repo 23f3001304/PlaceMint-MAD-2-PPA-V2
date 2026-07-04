@@ -4,7 +4,7 @@ from flask import Blueprint, request
 from app.auth.rbac import role_required
 from app.models.constants import ApprovalStatus, Role
 from app.models.profiles.company import CompanyProfile
-from app.services.accounts.moderation import delete_company, set_company_approval
+from app.services.accounts.moderation import delete_company, get_company, set_company_approval
 from app.utils.responses import ok, serve_page
 
 admin_companies_bp = Blueprint("admin_companies", __name__)
@@ -24,6 +24,21 @@ def list_companies():
             CompanyProfile.company_name.ilike(like) | CompanyProfile.industry.ilike(like)
         )
     return serve_page(query.order_by(CompanyProfile.created_at.desc()), lambda c: c.to_dict())
+
+
+@admin_companies_bp.get("/<int:company_id>")
+@role_required(Role.ADMIN)
+def detail(company_id):
+    company = get_company(company_id)
+    data = company.to_dict()
+    data["drives"] = [
+        {
+            "id": d.id, "job_title": d.job_title, "drive_name": d.drive_name,
+            "status": d.status, "applicant_count": len(d.applications),
+        }
+        for d in company.drives
+    ]
+    return ok(data)
 
 
 @admin_companies_bp.post("/<int:company_id>/approval")

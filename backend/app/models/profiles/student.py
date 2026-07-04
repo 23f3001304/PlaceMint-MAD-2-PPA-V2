@@ -21,6 +21,7 @@ class StudentProfile(db.Model, TimestampMixin):
     skills = db.Column(db.JSON, default=list)  # e.g. ["Python", "SQL"]
     experience = db.Column(db.Text)  # internships / prior work, free text
     resume_path = db.Column(db.String(255))
+    onboarded = db.Column(db.Boolean, default=False, nullable=False)
 
     user = db.relationship("User", back_populates="student_profile")
     applications = db.relationship(
@@ -45,6 +46,7 @@ class StudentProfile(db.Model, TimestampMixin):
             "skills": self.skills or [],
             "experience": self.experience,
             "has_resume": bool(self.resume_path),
+            "onboarded": self.onboarded,
             "is_active": self.user.is_active if self.user else True,
             "is_blacklisted": self.user.is_blacklisted if self.user else False,
         }

@@ -76,3 +76,12 @@ class TestCaching(AppTestCase):
         self.assertEqual(self._companies(admin), first)  # cache hit: still stale
         self.approve_first_company()  # a write that invalidates the cache
         self.assertEqual(self._companies(admin), first + 1)  # refreshed
+
+
+class TestOnboarding(AppTestCase):
+    def test_onboarded_flag_toggles(self):
+        self.register_student()
+        stu = self.hdr("s@t.com", "secret1")
+        self.assertFalse(self.client.get("/api/student/profile", headers=stu).get_json()["data"]["onboarded"])
+        self.client.patch("/api/student/profile", json={"onboarded": True}, headers=stu)
+        self.assertTrue(self.client.get("/api/student/profile", headers=stu).get_json()["data"]["onboarded"])

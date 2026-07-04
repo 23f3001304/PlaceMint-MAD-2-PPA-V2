@@ -21,6 +21,17 @@ export function installGuards(router) {
     if (to.meta.public) return true
     if (!isAuth) return { path: '/login', query: { redirect: to.fullPath } }
     if (to.meta.roles && !to.meta.roles.includes(role)) return homeFor(role)
+
+    // Students must finish onboarding before using the rest of the app.
+    if (
+      role === 'student'
+      && authState.profile
+      && !authState.profile.onboarded
+      && to.path.startsWith('/student')
+      && to.name !== 'student-onboarding'
+    ) {
+      return '/student/onboarding'
+    }
     return true
   })
 }
