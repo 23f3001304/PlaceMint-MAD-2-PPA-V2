@@ -40,6 +40,7 @@ class BaseConfig:
     # Default: real Celery + Redis. Set CELERY_TASK_ALWAYS_EAGER=1 to run jobs
     # inline (handy for a quick demo without starting a worker).
     CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", "0") == "1"
+    RATELIMIT_ENABLED = True
 
     # Pre-seeded admin.
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@ppa.local")
@@ -74,6 +75,7 @@ class TestingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     CACHE_TYPE = "SimpleCache"
     CELERY_TASK_ALWAYS_EAGER = True  # run export jobs inline, no broker needed
+    RATELIMIT_ENABLED = False  # tests hit endpoints in tight loops
 
 
 _CONFIGS = {

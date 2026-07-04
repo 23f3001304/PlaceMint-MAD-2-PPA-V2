@@ -1,5 +1,6 @@
 """Role-aware document serving: student resumes and generated offer letters."""
 import os
+from html import escape
 
 from flask import Blueprint, Response, current_app, send_file
 from flask_jwt_extended import jwt_required
@@ -57,8 +58,10 @@ def offer_letter(placement_id):
 
 
 def _render_offer_letter(p: Placement) -> str:
-    company = p.company.company_name if p.company else "The Company"
-    student = p.student.name if p.student else "Candidate"
+    # Escape all user-controlled fields: this HTML is served as text/html.
+    company = escape(p.company.company_name if p.company else "The Company")
+    student = escape(p.student.name if p.student else "Candidate")
+    position = escape(p.position or "")
     joining = p.joining_date.strftime("%d %B %Y") if p.joining_date else "to be confirmed"
     return (
         '<!doctype html><html><head><meta charset="utf-8"><title>Offer Letter</title></head>'
@@ -68,12 +71,12 @@ def _render_offer_letter(p: Placement) -> str:
         '<hr style="border:none;border-top:2px solid #1f6b3a;margin:12px 0 28px">'
         '<p style="text-align:right;color:#6b6357">Offer of Employment</p>'
         f'<p>Dear {student},</p>'
-        f'<p>We are delighted to offer you the position of <strong>{p.position}</strong> at '
+        f'<p>We are delighted to offer you the position of <strong>{position}</strong> at '
         f'{company}. Based on your performance through our placement process, we believe you '
         'will be a strong addition to our team.</p>'
         '<p>The key terms of your offer are:</p>'
         '<ul>'
-        f'<li>Position: <strong>{p.position}</strong></li>'
+        f'<li>Position: <strong>{position}</strong></li>'
         f'<li>Annual compensation: <strong>{p.salary_lpa} LPA</strong></li>'
         f'<li>Proposed joining date: <strong>{joining}</strong></li>'
         '</ul>'

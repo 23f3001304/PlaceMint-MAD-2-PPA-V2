@@ -8,6 +8,7 @@ import os
 from flask import Blueprint, current_app, send_file
 from flask_jwt_extended import jwt_required
 
+from app.auth.rate_limit import rate_limit
 from app.auth.rbac import current_user
 from app.extensions import db
 from app.models.constants import Role
@@ -28,6 +29,7 @@ def _owned_job(job_id: int) -> ExportJob:
 
 @exports_bp.post("")
 @jwt_required()
+@rate_limit(5, 60)
 def start_export():
     user = current_user()
     if user.role not in (Role.STUDENT, Role.COMPANY):

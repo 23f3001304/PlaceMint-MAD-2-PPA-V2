@@ -1,5 +1,6 @@
 """Monthly report job: an institute report to the admin and one per company."""
 from datetime import date
+from html import escape
 
 from celery import shared_task
 from flask import current_app
@@ -53,7 +54,7 @@ def _send_company_reports() -> int:
             ("Applications received", applications),
             ("Candidates placed", len(company.placements)),
         ])
-        html = _wrap(f"{company.company_name} - hiring report", body)
+        html = _wrap(f"{escape(company.company_name)} - hiring report", body)
         if company.user:
             send_email(company.user.email, f"Your monthly hiring report - {date.today():%B %Y}",
                        html, text="Monthly hiring report")

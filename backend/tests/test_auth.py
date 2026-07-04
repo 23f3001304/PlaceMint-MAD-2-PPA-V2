@@ -43,3 +43,19 @@ class TestAuth(AppTestCase):
         self.client.post(f"/api/admin/users/{uid}/blacklist", json={"blacklisted": True}, headers=admin)
         res = self.client.post("/api/auth/login", json={"email": "s@t.com", "password": "secret1"})
         self.assertEqual(res.status_code, 403)
+
+
+class TestSecurity(AppTestCase):
+    def test_security_headers_present(self):
+        res = self.client.get("/api/health")
+        self.assertEqual(res.headers.get("X-Content-Type-Options"), "nosniff")
+        self.assertIn("frame-ancestors", res.headers.get("Content-Security-Policy", ""))
+
+    def test_login_is_rate_limited(self):
+        self.app.config["RATELIMIT_ENABLED"] = True
+        self.register_student()
+        codes = [
+            self.client.post("/api/auth/login", json={"email": "s@t.com", "password": "no"}).status_code
+            for _ in range(12)
+        ]
+        self.assertIn(429, codes)

@@ -35,6 +35,36 @@ class TestJobs(AppTestCase):
         job_id = self.client.post("/api/exports", headers=stu).get_json()["data"]["id"]
         self.assertEqual(self.client.get(f"/api/exports/{job_id}", headers=co).status_code, 404)
 
+    def test_offer_letter_escapes_company_name(self):
+        self.client.post("/api/auth/register", json={
+            "role": "company", "email": "evil@t.com", "password": "secret1",
+            "company_name": "<script>alert(1)</script>"})
+        co = self.hdr("evil@t.com", "secret1")
+        self.approve_first_company()
+        drive_id = self.make_drive(co)
+        self.approve_drive(drive_id)
+        self.register_student()
+        stu = self.hdr("s@t.com", "secret1")
+        aid = self.client.post("/api/student/applications", json={"drive_id": drive_id}, headers=stu).get_json()["data"]["id"]
+        self.client.patch(f"/api/company/applications/{aid}", json={"status": "placed"}, headers=co)
+        pid = self.client.get("/api/student/applications/placements", headers=stu).get_json()["data"][0]["id"]
+        letter = self.client.get(f"/api/documents/offer-letter/{pid}", headers=stu)
+        self.assertNotIn(b"<script>alert(1)</script>", letter.data)
+
+    def test_csv_injection_is_neutralised(self):
+        self.client.post("/api/auth/register", json={
+            "role": "company", "email": "f@t.com", "password": "secret1", "company_name": "=cmd()"})
+        co = self.hdr("f@t.com", "secret1")
+        self.approve_first_company()
+        drive_id = self.make_drive(co)
+        self.approve_drive(drive_id)
+        self.register_student()
+        stu = self.hdr("s@t.com", "secret1")
+        self.client.post("/api/student/applications", json={"drive_id": drive_id}, headers=stu)
+        job = self.client.post("/api/exports", headers=stu).get_json()["data"]
+        data = self.client.get(f"/api/exports/{job['id']}/download", headers=stu).data
+        self.assertIn(b"'=cmd()", data)
+
     def test_reminders_and_reports_run(self):
         self._seed()
         with self.app.app_context():

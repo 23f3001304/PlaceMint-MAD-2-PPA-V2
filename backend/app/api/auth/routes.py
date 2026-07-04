@@ -3,6 +3,7 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 
 from app.api.auth.schema import clean_login, clean_registration
+from app.auth.rate_limit import rate_limit
 from app.auth.rbac import current_user
 from app.models.constants import Role
 from app.services.accounts.authentication import (
@@ -17,6 +18,7 @@ auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.post("/register")
+@rate_limit(5, 60)
 def register():
     role, data = clean_registration(request.get_json(silent=True) or {})
     user = register_student(data) if role == Role.STUDENT else register_company(data)
@@ -24,6 +26,7 @@ def register():
 
 
 @auth_bp.post("/login")
+@rate_limit(10, 60)
 def login():
     data = clean_login(request.get_json(silent=True) or {})
     user = authenticate(data["email"], data["password"])

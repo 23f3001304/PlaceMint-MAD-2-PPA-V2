@@ -18,6 +18,12 @@ _STUDENT_HEADERS = ["Student ID", "Company", "Drive Title", "Status", "Applied O
 _COMPANY_HEADERS = ["Student", "Student ID", "Drive Title", "Status", "Applied On"]
 
 
+def _safe(value):
+    """Neutralise CSV/formula injection (cells starting with = + - @ etc.)."""
+    text = str(value) if value is not None else ""
+    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
+
+
 def _student_rows(user: User):
     for app in user.student_profile.applications:
         drive = app.drive
@@ -61,7 +67,7 @@ def build_export(job_id: int) -> dict:
     with open(path, "w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
         writer.writerow(headers)
-        writer.writerows(rows)
+        writer.writerows([_safe(cell) for cell in row] for row in rows)
 
     job.status = "done"
     job.filename = filename

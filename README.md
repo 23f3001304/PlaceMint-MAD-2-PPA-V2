@@ -142,6 +142,20 @@ python -m unittest discover -s tests
 The suite (auth, placement rules, background jobs, caching) uses an in-memory
 database and runs Celery eagerly, so it needs neither Redis nor a worker.
 
+## Security
+
+- Passwords hashed with Werkzeug (PBKDF2). JWT auth carries a role claim, checked
+  on every protected route together with the account's active/blacklist status.
+- Rate limiting on login, registration and export (Redis-backed, with an
+  in-process fallback; fails open if neither is reachable so auth stays available).
+- Security headers on every response: `X-Content-Type-Options: nosniff`,
+  `X-Frame-Options: DENY`, `Referrer-Policy`, and a Content-Security-Policy.
+- Generated offer letters and report emails HTML-escape user data; CSV exports
+  neutralise spreadsheet formula-injection; SQLAlchemy parameterises all queries;
+  resume/offer-letter/export access is owner-and-role gated.
+- Set strong `SECRET_KEY` and `JWT_SECRET_KEY` in `.env` before any real deploy;
+  the defaults are development placeholders only.
+
 ## Notes
 - Email uses a console backend by default (messages are logged), so reminders and
   reports work with no mail server. Set `MAIL_BACKEND=smtp` plus the `SMTP_*`

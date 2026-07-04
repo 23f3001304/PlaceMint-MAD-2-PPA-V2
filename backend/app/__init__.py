@@ -34,9 +34,26 @@ def create_app(config_name: str | None = None) -> Flask:
     register_jwt_handlers(jwt)
     register_api(app)
     register_error_handlers(app)
+    _register_security_headers(app)
 
     _init_database(app)
     return app
+
+
+def _register_security_headers(app: Flask) -> None:
+    @app.after_request
+    def _headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "no-referrer")
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; img-src 'self' data:; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; script-src 'self'; "
+            "object-src 'none'; frame-ancestors 'none'",
+        )
+        return response
 
 
 def _ensure_runtime_dirs(app: Flask) -> None:
