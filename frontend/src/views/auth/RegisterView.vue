@@ -59,10 +59,8 @@ async function submit() {
         <div class="col-md-6"><FormField id="remail" v-model="form.email" label="Email" type="email" required autocomplete="email" /></div>
         <div class="col-md-6"><FormField id="rpass" v-model="form.password" label="Password" type="password" hint="At least 6 characters" required autocomplete="new-password" /></div>
       </div>
-      <Transition name="swap" mode="out-in">
-        <StudentFields v-if="role === 'student'" key="student" :form="form" />
-        <CompanyFields v-else key="company" :form="form" />
-      </Transition>
+      <StudentFields v-if="role === 'student'" :form="form" />
+      <CompanyFields v-else :form="form" />
       <button class="btn btn-3d-accent w-100 py-2 mt-2" :disabled="busy">
         {{ busy ? 'Creating...' : 'Create account' }}
       </button>
