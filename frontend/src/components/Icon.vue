@@ -16,6 +16,7 @@ const PATHS = {
   award: 'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM8.21 13.89 7 23l5-3 5 3-1.21-9.12',
   plus: 'M12 5v14M5 12h14',
   download: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3',
+  chevron: 'M6 9l6 6 6-6',
 }
 </script>
 

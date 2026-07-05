@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 import * as studentApi from '../../api/endpoints/student'
 import { useAsync } from '../../composables/useAsync'
-import { toastSuccess } from '../../store/ui'
+import { toastError, toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import DriveCard from '../../components/DriveCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
@@ -32,10 +32,17 @@ let timer
 watch(filters, () => { clearTimeout(timer); timer = setTimeout(load, 300) })
 
 async function apply(drive) {
-  await run(() => studentApi.apply(drive.id))
-  toastSuccess('Application submitted')
+  drive.applied = true // optimistic: flip the card immediately, no reload
+  drive.applicant_count = (drive.applicant_count || 0) + 1
   detail.open = false
-  load()
+  try {
+    await studentApi.apply(drive.id)
+    toastSuccess('Application submitted')
+  } catch (e) {
+    drive.applied = false
+    drive.applicant_count -= 1
+    toastError(e.message)
+  }
 }
 function view(drive) { detail.drive = drive; detail.open = true }
 </script>

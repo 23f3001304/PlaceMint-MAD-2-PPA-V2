@@ -100,3 +100,20 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
 ::-webkit-scrollbar-thumb { background: rgba(20, 17, 15, 0.22); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(31, 107, 58, 0.6); }
 @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
+
+/* Scroll reveal (v-reveal directive) + interactive lift */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s cubic-bezier(0.2, 0, 0, 1), transform 0.7s cubic-bezier(0.2, 0, 0, 1); }
+.reveal.is-revealed { opacity: 1; transform: none; }
+.hover-lift { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.hover-lift:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(20, 17, 15, 0.1); }
+
+/* Section tints + headline highlight (landing, FormDash-style) */
+.tint-mint { background: #dcefe1; }
+.tint-blue { background: #dce8f1; }
+.tint-cream { background: #fbeed2; }
+.tint-pink { background: #f4dede; }
+.hl { background: var(--ppa-accent); color: #fff; padding: 0 0.35rem; border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+/* Landing UI mocks (stylised product panels, not photos) */
+.mock-card { background: var(--ppa-surface); border: 1px solid var(--ppa-border); border-radius: 1rem; padding: 1.25rem; box-shadow: 0 26px 60px -24px rgba(20, 71, 42, 0.4); width: 100%; }
+.mock-title { font-family: var(--ppa-font-display); font-weight: 800; margin-bottom: 0.9rem; }

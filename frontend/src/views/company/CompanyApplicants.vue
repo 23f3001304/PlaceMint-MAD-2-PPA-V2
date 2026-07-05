@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 
 import * as companyApi from '../../api/endpoints/company'
+import { openDoc } from '../../api/client'
 import { useAsync } from '../../composables/useAsync'
 import { useExport } from '../../composables/useExport'
 import { toastSuccess } from '../../store/ui'
@@ -54,6 +55,7 @@ async function saveReview() {
   review.open = false
   load()
 }
+function viewResume(studentId) { openDoc(`/documents/resume/${studentId}`) }
 </script>
 
 <template>
@@ -84,7 +86,27 @@ async function saveReview() {
       </template>
     </DataTable>
 
-    <AppModal v-model="review.open" :title="review.app?.student?.name">
+    <AppModal v-model="review.open" :title="review.app?.student?.name" size="lg">
+      <div v-if="review.app?.student" class="applicant-card mb-3">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+          <div class="text-mono small text-muted">
+            {{ review.app.student.roll_no }} · {{ review.app.student.branch }} ·
+            CGPA {{ review.app.student.cgpa }} · Grad {{ review.app.student.grad_year }}
+          </div>
+          <button
+            v-if="review.app.student.has_resume" class="btn btn-sm btn-outline-secondary"
+            @click="viewResume(review.app.student.id)"
+          >View resume</button>
+          <span v-else class="small text-muted">No resume uploaded</span>
+        </div>
+        <div v-if="(review.app.student.skills || []).length" class="mt-2">
+          <span v-for="sk in review.app.student.skills" :key="sk" class="badge text-bg-light me-1 mb-1">{{ sk }}</span>
+        </div>
+        <p v-if="review.app.student.experience" class="small text-muted mt-2 mb-0" style="white-space: pre-line">
+          {{ review.app.student.experience }}
+        </p>
+      </div>
+
       <FormField v-model="review.status" label="Status" type="select" :options="STATUS_OPTIONS" />
       <div class="row gx-2">
         <div class="col-sm-7"><FormField v-model="review.interview_at" label="Interview date/time" type="datetime-local" /></div>
@@ -98,3 +120,10 @@ async function saveReview() {
     </AppModal>
   </div>
 </template>
+
+<style scoped>
+.applicant-card {
+  background: var(--ppa-surface-sunk); border: 1px solid var(--ppa-border);
+  border-radius: 0.75rem; padding: 0.9rem 1rem;
+}
+</style>
