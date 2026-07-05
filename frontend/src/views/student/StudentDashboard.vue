@@ -9,6 +9,7 @@ import AppModal from '../../components/overlays/AppModal.vue'
 import DriveCard from '../../components/DriveCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import StatTile from '../../components/ui/StatTile.vue'
+import CompleteProfileNotice from '../../components/CompleteProfileNotice.vue'
 
 const { run } = useAsync()
 const stats = ref({})
@@ -17,7 +18,9 @@ const org = reactive({ open: false, data: null })
 
 onMounted(async () => {
   stats.value = (await studentApi.stats()).data
-  orgs.value = (await studentApi.organizations()).data
+  if (authState.profile?.profile_complete) {
+    orgs.value = (await studentApi.organizations()).data
+  }
 })
 
 async function openOrg(o) {
@@ -42,17 +45,20 @@ async function apply(drive) {
       <div class="col-6 col-lg-3"><StatTile label="Open drives" :value="stats.open_drives ?? 0" icon="briefcase" /></div>
     </div>
 
-    <h2 class="h5 mb-3">Organizations</h2>
-    <div class="row g-3">
-      <div v-for="o in orgs" :key="o.id" class="col-md-6 col-xl-4">
-        <button class="surface-card p-3 w-100 text-start org-card" @click="openOrg(o)">
-          <div class="fw-semibold">{{ o.company_name }}</div>
-          <div class="small text-muted">{{ o.industry }}<span v-if="o.location"> · {{ o.location }}</span></div>
-          <div class="small mt-1 accent">{{ o.open_drives }} open drive(s)</div>
-        </button>
+    <CompleteProfileNotice v-if="!authState.profile?.profile_complete" />
+    <template v-else>
+      <h2 class="h5 mb-3">Organizations</h2>
+      <div class="row g-3">
+        <div v-for="o in orgs" :key="o.id" class="col-md-6 col-xl-4">
+          <button class="surface-card p-3 w-100 text-start org-card" @click="openOrg(o)">
+            <div class="fw-semibold">{{ o.company_name }}</div>
+            <div class="small text-muted">{{ o.industry }}<span v-if="o.location"> · {{ o.location }}</span></div>
+            <div class="small mt-1 accent">{{ o.open_drives }} open drive(s)</div>
+          </button>
+        </div>
+        <p v-if="!orgs.length" class="text-muted">No organizations are hiring yet.</p>
       </div>
-      <p v-if="!orgs.length" class="text-muted">No organizations are hiring yet.</p>
-    </div>
+    </template>
 
     <AppModal v-model="org.open" :title="org.data?.company_name" size="lg">
       <p class="text-muted">{{ org.data?.description }}</p>

@@ -31,6 +31,11 @@ class StudentProfile(db.Model, TimestampMixin):
         "Placement", back_populates="student", cascade="all, delete-orphan"
     )
 
+    @property
+    def is_complete(self) -> bool:
+        """Enough profile to be evaluated for eligibility (CGPA is the key field)."""
+        return bool(self.cgpa and self.cgpa > 0)
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -47,6 +52,7 @@ class StudentProfile(db.Model, TimestampMixin):
             "experience": self.experience,
             "has_resume": bool(self.resume_path),
             "onboarded": self.onboarded,
+            "profile_complete": self.is_complete,
             "is_active": self.user.is_active if self.user else True,
             "is_blacklisted": self.user.is_blacklisted if self.user else False,
         }

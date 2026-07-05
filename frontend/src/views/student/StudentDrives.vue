@@ -10,6 +10,8 @@ import DriveCard from '../../components/DriveCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import SearchBar from '../../components/forms/SearchBar.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
+import CompleteProfileNotice from '../../components/CompleteProfileNotice.vue'
+import { authState } from '../../store/auth'
 
 const { run, loading } = useAsync()
 const drives = ref([])
@@ -18,6 +20,7 @@ const detail = reactive({ open: false, drive: null })
 const route = useRoute()
 
 async function load() {
+  if (!authState.profile?.profile_complete) return
   drives.value = (await run(() => studentApi.drives({
     q: filters.q,
     company: route.query.company || '',
@@ -40,7 +43,7 @@ function view(drive) { detail.drive = drive; detail.open = true }
 <template>
   <div class="motion-fade-up">
     <PageHeader title="Browse drives" subtitle="Approved openings you can apply to">
-      <template #actions>
+      <template v-if="authState.profile?.profile_complete" #actions>
         <div class="form-check d-flex align-items-center gap-2 me-2">
           <input id="elig" v-model="filters.eligible_only" class="form-check-input mt-0" type="checkbox" />
           <label for="elig" class="form-check-label small">Eligible only</label>
@@ -49,12 +52,15 @@ function view(drive) { detail.drive = drive; detail.open = true }
       </template>
     </PageHeader>
 
-    <p v-if="!loading && !drives.length" class="text-muted">No drives match your filters.</p>
-    <div class="row g-3">
-      <div v-for="d in drives" :key="d.id" class="col-md-6 col-xl-4">
-        <DriveCard :drive="d" @apply="apply" @view="view" />
+    <CompleteProfileNotice v-if="!authState.profile?.profile_complete" />
+    <template v-else>
+      <p v-if="!loading && !drives.length" class="text-muted">No drives match your filters.</p>
+      <div class="row g-3">
+        <div v-for="d in drives" :key="d.id" class="col-md-6 col-xl-4">
+          <DriveCard :drive="d" @apply="apply" @view="view" />
+        </div>
       </div>
-    </div>
+    </template>
 
     <AppModal v-model="detail.open" :title="detail.drive?.job_title" size="lg">
       <div v-if="detail.drive">
