@@ -80,9 +80,11 @@ frontend/
 ### Prerequisites
 - Python 3.11+
 - Node 18+ and npm
-- Redis. On Windows the simplest option is **Memurai** (a native Redis for
-  Windows): `winget install Memurai.MemuraiDeveloper`. WSL (`sudo apt install
-  redis-server`) or Docker (`docker run -p 6379:6379 redis`) also work.
+- Redis. Easiest cross-platform is Docker (used by the launcher script below):
+  `docker run -d --name ppa-redis -p 6379:6379 redis:alpine` (restart later with
+  `docker start ppa-redis`). On Windows without Docker, **Memurai** is a native
+  drop-in (`winget install Memurai.MemuraiDeveloper`); WSL (`sudo apt install
+  redis-server`) also works.
 
 ### 1. Backend API
 ```bash
@@ -111,17 +113,29 @@ For a production-style run, `npm run build` outputs to `frontend/dist`, which
 Flask can serve as static files.
 
 ### 3. Background jobs (Celery + Redis)
-With Redis running, in two more terminals:
+With Redis running, start the worker and the scheduler. On **Windows** they must
+be separate processes (`--pool=solo` is required, and embedded `-B` beat is not
+supported there):
 ```bash
 cd backend && venv\Scripts\activate
-celery -A celery_worker.celery worker --pool=solo -B --loglevel=info
+celery -A celery_worker.celery worker --pool=solo --loglevel=info   # terminal A
+celery -A celery_worker.celery beat --loglevel=info                 # terminal B
 ```
-`--pool=solo` is required on Windows; `-B` runs the beat scheduler in the same
-process so the daily reminder (08:00 UTC) and monthly report (1st of the month)
-jobs fire on schedule.
+On macOS/Linux you can combine them into one: `celery -A celery_worker.celery worker -B`.
+The daily reminder (08:00 UTC) and monthly report (1st of the month) fire on
+schedule; the user-triggered CSV export runs as soon as a student or company
+requests it.
 
-To demo the CSV export without starting a worker, run the API with
-`CELERY_TASK_ALWAYS_EAGER=1` so jobs run inline. The default is real Celery+Redis.
+To demo exports without a worker, run the API with `CELERY_TASK_ALWAYS_EAGER=1`
+so jobs run inline (this is also how the test suite runs). The default is real
+Celery + Redis.
+
+### Run the whole stack at once (Windows)
+Once the venv, `npm install`, and Docker are ready, one command opens Redis, the
+API, the Celery worker and beat, and the Vite dev server, each in its own window:
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\dev.ps1
+```
 
 ## Demo accounts
 
