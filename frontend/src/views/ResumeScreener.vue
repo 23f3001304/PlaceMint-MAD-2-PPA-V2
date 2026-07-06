@@ -44,16 +44,12 @@ const verdict = computed(() => {
 
     <div class="row g-3">
       <div class="col-md-6">
-        <div class="surface-card p-3 h-100">
-          <label class="form-label fw-semibold small mb-2">Resume text</label>
-          <textarea v-model="resume" class="form-control screener-input" placeholder="Paste the resume text here..."></textarea>
-        </div>
+        <label class="form-label fw-semibold small">Resume text</label>
+        <textarea v-model="resume" class="form-control screener-input" placeholder="Paste the resume text here..."></textarea>
       </div>
       <div class="col-md-6">
-        <div class="surface-card p-3 h-100">
-          <label class="form-label fw-semibold small mb-2">Job description / required skills</label>
-          <textarea v-model="jd" class="form-control screener-input" placeholder="Paste the job description or list the required skills..."></textarea>
-        </div>
+        <label class="form-label fw-semibold small">Job description / required skills</label>
+        <textarea v-model="jd" class="form-control screener-input" placeholder="Paste the job description or list the required skills..."></textarea>
       </div>
     </div>
     <button class="btn btn-3d-accent mt-3 px-4" :disabled="!resume || !jd" @click="screen">Screen resume</button>
@@ -91,8 +87,7 @@ const verdict = computed(() => {
 </template>
 
 <style scoped>
-.screener-input { border: 0; resize: vertical; min-height: 240px; background: transparent; padding: 0; }
-.screener-input:focus { box-shadow: none; }
+.screener-input { min-height: 260px; resize: vertical; }
 .result-card { padding: 1.5rem; }
 .result-head { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
 .score-ring {
