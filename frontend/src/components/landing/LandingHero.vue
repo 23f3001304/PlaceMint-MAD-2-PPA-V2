@@ -48,7 +48,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 </template>
 
 <style scoped>
-.hero { position: relative; overflow: hidden; min-height: 92vh; display: flex; flex-direction: column; padding: 1.5rem clamp(1rem, 5vw, 4rem); }
+.hero { position: relative; overflow: hidden; min-height: 100vh; display: flex; flex-direction: column; padding: 1.5rem clamp(1rem, 5vw, 4rem); }
 .hero-parallax { position: absolute; inset: -12% 0 0 0; z-index: 0; will-change: transform; }
 .hero-bg { position: absolute; inset: 0; height: 118%; }
 .hero-nav { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
