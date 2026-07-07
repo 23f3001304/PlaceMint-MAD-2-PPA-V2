@@ -3,36 +3,40 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <section v-reveal class="cta-wrap">
-    <div class="cta-banner">
-      <span class="cta-badge" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M7 17 17 7M17 7H8M17 7v9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </span>
-      <div class="cta-inner">
-        <p class="cta-eyebrow"><span class="cta-square"></span>Placement season, sorted</p>
-        <h2 class="cta-title">Run placements <span class="cta-em">without the chaos.</span></h2>
-        <p class="cta-sub">Set up your institute, invite companies, and open the season in minutes.</p>
-        <div class="cta-actions">
-          <RouterLink to="/register" class="cta-btn cta-primary">Get started</RouterLink>
-          <RouterLink to="/login" class="cta-btn cta-ghost">Sign in</RouterLink>
-        </div>
+  <section v-reveal class="cta-banner">
+    <div class="cta-inner">
+      <p class="cta-eyebrow"><span class="cta-square"></span>Placement season, sorted</p>
+      <h2 class="cta-title">Run placements <span class="cta-em">without the chaos.</span></h2>
+      <p class="cta-sub">Set up your institute, invite companies, and open the season in minutes.</p>
+      <div class="cta-actions">
+        <RouterLink to="/register" class="cta-btn cta-primary">Get started</RouterLink>
+        <RouterLink to="/login" class="cta-btn cta-ghost">Sign in</RouterLink>
       </div>
     </div>
+
+    <svg class="cta-pixels" viewBox="0 0 150 120" fill="#7fce97" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="30" height="30" opacity="0.9" />
+      <rect x="60" y="0" width="30" height="30" opacity="0.5" />
+      <rect x="120" y="0" width="30" height="30" opacity="0.8" />
+      <rect x="30" y="30" width="30" height="30" opacity="0.6" />
+      <rect x="90" y="30" width="30" height="30" opacity="0.95" />
+      <rect x="0" y="60" width="30" height="30" opacity="0.5" />
+      <rect x="60" y="60" width="30" height="30" opacity="0.85" />
+      <rect x="120" y="60" width="30" height="30" opacity="0.55" />
+      <rect x="30" y="90" width="30" height="30" opacity="0.8" />
+      <rect x="90" y="90" width="30" height="30" opacity="0.45" />
+    </svg>
   </section>
 </template>
 
 <style scoped>
-.cta-wrap { padding: clamp(1rem, 4vw, 3rem); }
 .cta-banner {
   position: relative; overflow: hidden; isolation: isolate;
-  padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.5rem, 6vw, 5rem);
-  border-radius: 1.5rem; color: #f4f0e8;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+  color: #f4f0e8;
   background:
-    radial-gradient(130% 130% at 100% 0%, rgba(46, 138, 77, 0.55), transparent 55%),
+    radial-gradient(130% 130% at 100% 0%, rgba(46, 138, 77, 0.5), transparent 55%),
     linear-gradient(155deg, #1f6b3a, #0f4624);
-  box-shadow: 0 40px 80px -40px rgba(15, 70, 36, 0.7);
 }
 .cta-banner::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
@@ -43,12 +47,7 @@ import { RouterLink } from 'vue-router'
   -webkit-mask-image: radial-gradient(120% 110% at 0% 100%, #000, transparent 72%);
   mask-image: radial-gradient(120% 110% at 0% 100%, #000, transparent 72%);
 }
-.cta-badge {
-  position: absolute; top: clamp(1.25rem, 3vw, 2rem); right: clamp(1.25rem, 3vw, 2rem);
-  width: 2.75rem; height: 2.75rem; display: grid; place-items: center;
-  background: #7fce97; color: #0f4624; border-radius: 0.7rem;
-}
-.cta-inner { position: relative; max-width: 42rem; }
+.cta-inner { position: relative; z-index: 1; max-width: 42rem; }
 .cta-eyebrow {
   display: inline-flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem;
   text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700;
@@ -71,4 +70,9 @@ import { RouterLink } from 'vue-router'
 .cta-primary:hover { transform: translateY(-2px); background: #fff; color: #14110f; }
 .cta-ghost { color: #f4f0e8; border: 1px solid rgba(244, 240, 232, 0.4); }
 .cta-ghost:hover { background: rgba(244, 240, 232, 0.12); border-color: rgba(244, 240, 232, 0.7); color: #f4f0e8; }
+.cta-pixels {
+  position: absolute; z-index: 0; right: clamp(1.5rem, 5vw, 5rem); top: 50%;
+  transform: translateY(-50%); width: clamp(140px, 18vw, 220px); height: auto; pointer-events: none;
+}
+@media (max-width: 860px) { .cta-pixels { display: none; } }
 </style>
