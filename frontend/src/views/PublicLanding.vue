@@ -46,13 +46,19 @@ const FEATURES = [
 
 <template>
   <div class="landing">
-    <LandingHero />
-    <FeatureSection v-for="f in FEATURES" :key="f.eyebrow" v-bind="f" />
-    <FinalCta />
-    <LandingFooter />
+    <div class="landing-main">
+      <LandingHero />
+      <FeatureSection v-for="f in FEATURES" :key="f.eyebrow" v-bind="f" />
+      <FinalCta />
+    </div>
+    <LandingFooter class="landing-footer" />
   </div>
 </template>
 
 <style scoped>
 .landing { background: var(--ppa-surface); }
+/* Curtain reveal: the footer stays pinned behind the page; the content sits on
+   top with a solid background and slides up to uncover it at the end of scroll. */
+.landing-main { position: relative; z-index: 2; background: var(--ppa-surface); box-shadow: 0 32px 44px -12px rgba(20, 17, 15, 0.26); }
+.landing-footer { position: sticky; bottom: 0; z-index: 1; }
 </style>
