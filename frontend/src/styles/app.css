@@ -47,7 +47,14 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
   padding: 1rem 0.75rem; z-index: 1030;
 }
 .app-main { margin-left: var(--ppa-sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
-.app-content { padding: 1.5rem clamp(1rem, 3vw, 2.5rem); flex: 1; }
+.app-content {
+  padding: 1.5rem clamp(1rem, 3vw, 2.5rem); flex: 1;
+  background-color: var(--ppa-bg);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(31, 107, 58, 0.05) 1px, transparent 0),
+    radial-gradient(42rem 34rem at 100% 0%, rgba(31, 107, 58, 0.06), transparent 60%);
+  background-size: 24px 24px, 100% 100%;
+}
 .side-link { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.75rem; border-radius: 0.5rem; color: #c8c3b7; font-weight: 500; text-decoration: none; }
 .side-link:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
 .side-link.router-link-active { background: var(--ppa-accent); color: #fff; }

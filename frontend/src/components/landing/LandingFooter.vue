@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 
+import BrandMark from '../BrandMark.vue'
 import DitherImage from '../media/DitherImage.vue'
 </script>
 
@@ -11,7 +12,7 @@ import DitherImage from '../media/DitherImage.vue'
     <div class="footer-content">
       <div class="footer-top">
         <div class="footer-brand">
-          <div class="brand-mark text-white fs-3 mb-2">PlaceMint</div>
+          <BrandMark :size="34" class="text-white mb-2" />
           <p class="mb-0 muted" style="max-width: 24rem">
             Campus placements without the spreadsheets. One place for the cell, companies, and students.
           </p>

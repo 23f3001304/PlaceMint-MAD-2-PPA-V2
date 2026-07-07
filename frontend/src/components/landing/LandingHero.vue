@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 import { authState } from '../../store/auth'
 import { homeFor } from '../../router/guards'
+import BrandMark from '../BrandMark.vue'
 import DitherImage from '../media/DitherImage.vue'
 
 const bg = ref(null)
@@ -25,12 +26,12 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     <div ref="bg" class="hero-parallax"><DitherImage src="/img/mountains.jpg" alt="" tint="green" class="hero-bg" /></div>
 
     <nav class="hero-nav">
-      <span class="brand-mark text-white fs-4">PlaceMint</span>
-      <div class="d-flex gap-2">
-        <RouterLink v-if="authState.user" :to="homeFor(authState.user.role)" class="btn btn-light btn-sm">Dashboard</RouterLink>
+      <BrandMark :size="34" class="text-white" />
+      <div class="d-flex gap-2 align-items-center">
+        <RouterLink v-if="authState.user" :to="homeFor(authState.user.role)" class="nav-pill nav-pill-solid">Dashboard</RouterLink>
         <template v-else>
-          <RouterLink to="/login" class="btn btn-outline-light btn-sm">Sign in</RouterLink>
-          <RouterLink to="/register" class="btn btn-light btn-sm">Register</RouterLink>
+          <RouterLink to="/login" class="nav-pill">Sign in</RouterLink>
+          <RouterLink to="/register" class="nav-pill nav-pill-solid">Register</RouterLink>
         </template>
       </div>
     </nav>
@@ -52,6 +53,10 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 .hero-parallax { position: absolute; inset: -12% 0 0 0; z-index: 0; will-change: transform; }
 .hero-bg { position: absolute; inset: 0; height: 118%; }
 .hero-nav { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
+.nav-pill { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.92rem; padding: 0.5rem 1.15rem; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.32); transition: background 0.15s ease, border-color 0.15s ease; }
+.nav-pill:hover { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.55); }
+.nav-pill-solid { background: #fff; color: var(--ppa-ink); border-color: #fff; }
+.nav-pill-solid:hover { background: #ece6d6; border-color: #ece6d6; color: var(--ppa-ink); }
 .hero-content { position: relative; z-index: 1; margin-top: auto; margin-bottom: 3rem; max-width: 760px; }
 .hero-title { font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
 .hero-sub { font-size: 1.15rem; max-width: 34rem; margin: 1.2rem 0 1.8rem; opacity: 0.92; }

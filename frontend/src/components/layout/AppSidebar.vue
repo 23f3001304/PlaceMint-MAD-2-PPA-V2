@@ -4,6 +4,7 @@ import { RouterLink, useRouter } from 'vue-router'
 
 import { authState, logout } from '../../store/auth'
 import { navFor } from '../../router/nav'
+import BrandMark from '../BrandMark.vue'
 import Icon from '../Icon.vue'
 
 defineProps({ open: Boolean })
@@ -20,9 +21,8 @@ function signOut() {
 
 <template>
   <aside class="app-sidebar" :class="{ 'is-open': open }">
-    <div class="d-flex align-items-center gap-2 px-2 mb-4 mt-1">
-      <span class="brand-dot"></span>
-      <span class="brand-mark text-white fs-5">PlaceMint</span>
+    <div class="px-2 mb-4 mt-1">
+      <BrandMark :size="30" class="text-white" />
     </div>
 
     <nav class="d-flex flex-column gap-1 flex-grow-1">
