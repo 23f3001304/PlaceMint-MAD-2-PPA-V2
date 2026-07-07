@@ -26,7 +26,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     <div ref="bg" class="hero-parallax"><DitherImage src="/img/mountains.jpg" alt="" tint="green" class="hero-bg" /></div>
 
     <nav class="hero-nav">
-      <BrandMark :size="34" class="text-white" />
+      <BrandMark :size="42" :wordmark="false" class="text-white" />
       <div class="d-flex gap-2 align-items-center">
         <RouterLink v-if="authState.user" :to="homeFor(authState.user.role)" class="nav-pill nav-pill-solid">Dashboard</RouterLink>
         <template v-else>

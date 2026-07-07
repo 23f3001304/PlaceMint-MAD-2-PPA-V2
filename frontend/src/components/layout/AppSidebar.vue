@@ -39,10 +39,3 @@ function signOut() {
     </button>
   </aside>
 </template>
-
-<style scoped>
-.brand-dot {
-  width: 14px; height: 14px; border-radius: 4px; background: var(--ppa-accent);
-  box-shadow: 0 0 0 3px rgba(31, 107, 58, 0.25);
-}
-</style>

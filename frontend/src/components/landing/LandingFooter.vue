@@ -12,7 +12,7 @@ import DitherImage from '../media/DitherImage.vue'
     <div class="footer-content">
       <div class="footer-top">
         <div class="footer-brand">
-          <BrandMark :size="34" class="text-white mb-2" />
+          <BrandMark :size="42" :wordmark="false" class="text-white mb-2" />
           <p class="mb-0 muted" style="max-width: 24rem">
             Campus placements without the spreadsheets. One place for the cell, companies, and students.
           </p>
