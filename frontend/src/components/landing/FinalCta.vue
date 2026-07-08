@@ -23,6 +23,13 @@ import { RouterLink } from 'vue-router'
   background: #1c6e3c; color: #f4f0e8;
   border-top: 4px solid #0f4624;
 }
+.cta-banner::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(244, 240, 232, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 240, 232, 0.08) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
 .cta-inner { position: relative; z-index: 1; max-width: 44rem; }
 .cta-tag {
   display: inline-block; margin: 0 0 1.1rem; padding: 0.32rem 0.62rem;
