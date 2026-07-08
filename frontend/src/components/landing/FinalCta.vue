@@ -14,18 +14,7 @@ import { RouterLink } from 'vue-router'
       </div>
     </div>
 
-    <svg class="cta-pixels" viewBox="0 0 150 120" fill="#7fce97" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="0" width="30" height="30" opacity="0.9" />
-      <rect x="60" y="0" width="30" height="30" opacity="0.5" />
-      <rect x="120" y="0" width="30" height="30" opacity="0.8" />
-      <rect x="30" y="30" width="30" height="30" opacity="0.6" />
-      <rect x="90" y="30" width="30" height="30" opacity="0.95" />
-      <rect x="0" y="60" width="30" height="30" opacity="0.5" />
-      <rect x="60" y="60" width="30" height="30" opacity="0.85" />
-      <rect x="120" y="60" width="30" height="30" opacity="0.55" />
-      <rect x="30" y="90" width="30" height="30" opacity="0.8" />
-      <rect x="90" y="90" width="30" height="30" opacity="0.45" />
-    </svg>
+    <div class="cta-mesh" aria-hidden="true"></div>
   </section>
 </template>
 
@@ -70,9 +59,14 @@ import { RouterLink } from 'vue-router'
 .cta-primary:hover { transform: translateY(-2px); background: #fff; color: #14110f; }
 .cta-ghost { color: #f4f0e8; border: 1px solid rgba(244, 240, 232, 0.4); }
 .cta-ghost:hover { background: rgba(244, 240, 232, 0.12); border-color: rgba(244, 240, 232, 0.7); color: #f4f0e8; }
-.cta-pixels {
-  position: absolute; z-index: 0; right: clamp(1.5rem, 5vw, 5rem); top: 50%;
-  transform: translateY(-50%); width: clamp(140px, 18vw, 220px); height: auto; pointer-events: none;
+/* Checkerboard that grows out of the banner grid (same 46px cell), anchored to
+   the right end and faded into the middle so it reads as one cohesive surface. */
+.cta-mesh {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+  background-image: conic-gradient(#7fce97 0 90deg, transparent 90deg 180deg, #7fce97 180deg 270deg, transparent 270deg 360deg);
+  background-size: 92px 92px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 55%, #000 92%);
+  mask-image: linear-gradient(90deg, transparent 55%, #000 92%);
 }
-@media (max-width: 860px) { .cta-pixels { display: none; } }
+@media (max-width: 860px) { .cta-mesh { opacity: 0.26; } }
 </style>
