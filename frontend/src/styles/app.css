@@ -147,3 +147,24 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
   outline: none;
 }
 .form-control:disabled, .form-select:disabled { opacity: 0.65; }
+
+/* Profile sections, skill pills, empty states, resume dropzone (student + company) */
+.sec-head { display: flex; align-items: center; gap: 0.5rem; font-family: var(--ppa-font-display); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.9rem; }
+.sec-ico { color: var(--ppa-accent); display: inline-flex; }
+.skill-pill { background: #dcefe1; color: #1f6b3a; border: 1px solid #a9d7b8; padding: 0.3rem 0.75rem; border-radius: 999px; font-weight: 600; font-size: 0.85rem; }
+.empty-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: 1rem 1.25rem; border: 1px dashed var(--ppa-border); border-radius: 0.6rem;
+  background: var(--ppa-surface-sunk); color: var(--ppa-muted);
+}
+.resume-chip {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem;
+  border: 1px solid var(--ppa-border); border-radius: 0.7rem; background: var(--ppa-surface-sunk);
+}
+.resume-drop {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem; text-align: center;
+  padding: 1.75rem; border: 1.5px dashed var(--ppa-border); border-radius: 0.7rem; cursor: pointer;
+  color: var(--ppa-muted); background: var(--ppa-surface-sunk);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.resume-drop:hover { border-color: var(--ppa-accent); background: #eef5f0; color: var(--ppa-accent); }
