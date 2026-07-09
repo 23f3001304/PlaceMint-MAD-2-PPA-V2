@@ -22,7 +22,7 @@ function signOut() {
 <template>
   <aside class="app-sidebar" :class="{ 'is-open': open }">
     <div class="px-2 mb-4 mt-1">
-      <BrandMark :size="30" class="text-white" />
+      <BrandMark :icon="false" class="text-white" />
     </div>
 
     <nav class="d-flex flex-column gap-1 flex-grow-1">

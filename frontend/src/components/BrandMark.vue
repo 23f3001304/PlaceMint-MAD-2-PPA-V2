@@ -1,12 +1,16 @@
 <script setup>
 // Leaf-P logo (no background tile). The P uses currentColor so it adapts to the
 // surface (white on dark bars via `text-white`); the leaf stays mint.
-defineProps({ size: { type: Number, default: 32 }, wordmark: { type: Boolean, default: true } })
+defineProps({
+  size: { type: Number, default: 32 },
+  wordmark: { type: Boolean, default: true },
+  icon: { type: Boolean, default: true },
+})
 </script>
 
 <template>
   <span class="brand d-inline-flex align-items-center gap-2">
-    <svg :width="size" :height="size" viewBox="126 34 380 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg v-if="icon" :width="size" :height="size" viewBox="126 34 380 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M150 150h104a88 88 0 0 1 0 176h-56v80h-48V150zm48 48v80h56a40 40 0 0 0 0-80h-56z" fill="currentColor" />
       <path d="M298 150c34-78 128-96 156-100-2 46-18 132-118 148-26 4-44-16-38-48z" fill="#7fce97" />
       <path d="M312 178c40-52 104-96 140-120" stroke="#1f6b3a" stroke-width="9" fill="none" stroke-linecap="round" />

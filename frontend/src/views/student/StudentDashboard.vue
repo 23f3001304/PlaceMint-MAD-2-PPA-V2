@@ -10,8 +10,6 @@ import DriveCard from '../../components/DriveCard.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import StatTile from '../../components/ui/StatTile.vue'
 import CompleteProfileNotice from '../../components/CompleteProfileNotice.vue'
-import ChartCanvas from '../../components/charts/ChartCanvas.vue'
-import { toChartData } from '../../data/charts'
 
 const { run } = useAsync()
 const stats = ref({})
@@ -50,15 +48,6 @@ async function apply(drive) {
       <div class="col-6 col-lg-3"><StatTile label="In progress" :value="stats.in_progress ?? 0" icon="users" /></div>
       <div class="col-6 col-lg-3"><StatTile label="Placements" :value="stats.placements ?? 0" icon="award" /></div>
       <div class="col-6 col-lg-3"><StatTile label="Open drives" :value="stats.open_drives ?? 0" icon="briefcase" /></div>
-    </div>
-
-    <div v-if="stats.applications" class="row g-3 mb-4">
-      <div class="col-lg-6">
-        <div class="surface-card p-3 h-100">
-          <h2 class="h6 mb-3">Your applications</h2>
-          <ChartCanvas type="doughnut" :data="toChartData(stats.applications_by_status || {})" />
-        </div>
-      </div>
     </div>
 
     <CompleteProfileNotice v-if="!authState.profile?.profile_complete" />
