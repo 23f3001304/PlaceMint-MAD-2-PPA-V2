@@ -17,6 +17,7 @@ class CompanyProfile(db.Model, TimestampMixin):
     location = db.Column(db.String(120))
     hr_contact = db.Column(db.String(120))
     website = db.Column(db.String(200))
+    links = db.Column(db.JSON, default=list)  # up to 4 {label, url} links
     description = db.Column(db.Text)
     approval_status = db.Column(
         db.String(20), default=ApprovalStatus.PENDING, nullable=False, index=True
@@ -44,6 +45,7 @@ class CompanyProfile(db.Model, TimestampMixin):
             "location": self.location,
             "hr_contact": self.hr_contact,
             "website": self.website,
+            "links": self.links or [],
             "description": self.description,
             "approval_status": self.approval_status,
             "drive_count": len(self.drives),

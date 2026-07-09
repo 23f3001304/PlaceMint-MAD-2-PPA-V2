@@ -20,6 +20,7 @@ class StudentProfile(db.Model, TimestampMixin):
     phone = db.Column(db.String(20))
     skills = db.Column(db.JSON, default=list)  # e.g. ["Python", "SQL"]
     experience = db.Column(db.Text)  # internships / prior work, free text
+    links = db.Column(db.JSON, default=list)  # up to 3 {label, url} social links
     resume_path = db.Column(db.String(255))
     onboarded = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -50,6 +51,7 @@ class StudentProfile(db.Model, TimestampMixin):
             "phone": self.phone,
             "skills": self.skills or [],
             "experience": self.experience,
+            "links": self.links or [],
             "has_resume": bool(self.resume_path),
             "onboarded": self.onboarded,
             "profile_complete": self.is_complete,

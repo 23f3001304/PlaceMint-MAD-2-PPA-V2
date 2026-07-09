@@ -2,7 +2,7 @@
 from datetime import date
 
 from app.utils.errors import ApiError
-from app.utils.validation import as_float, as_list, require
+from app.utils.validation import as_float, as_list, clean_links, require
 
 _PROFILE_FIELDS = ("company_name", "industry", "location", "hr_contact", "website", "description")
 
@@ -51,4 +51,6 @@ def clean_company_profile(data: dict) -> dict:
     out = {field: _clean(data[field]) for field in _PROFILE_FIELDS if field in data}
     if "company_name" in out and not out["company_name"]:
         raise ApiError("Company name cannot be empty")
+    if "links" in data:
+        out["links"] = clean_links(data.get("links"), 4)
     return out

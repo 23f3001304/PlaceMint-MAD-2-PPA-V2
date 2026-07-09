@@ -47,3 +47,22 @@ def as_list(value) -> list:
     if isinstance(value, list):
         return [str(v).strip() for v in value if str(v).strip()]
     return [part.strip() for part in str(value).split(",") if part.strip()]
+
+
+def clean_links(value, cap: int) -> list:
+    """Normalize a list of {label, url} links: force a scheme, derive a missing
+    label from the host, and cap the count (student profiles 3, company 4)."""
+    out = []
+    for item in value or []:
+        if not isinstance(item, dict):
+            continue
+        url = (item.get("url") or "").strip()
+        if not url:
+            continue
+        if not url.startswith(("http://", "https://")):
+            url = "https://" + url
+        label = (item.get("label") or "").strip() or url.split("//", 1)[-1].split("/", 1)[0]
+        out.append({"label": label[:40], "url": url[:200]})
+        if len(out) >= cap:
+            break
+    return out

@@ -10,6 +10,13 @@ def register_api(app):
     _register_admin(app)
     _register_company(app)
     _register_student(app)
+    _register_directory(app)
+
+
+def _register_directory(app):
+    from app.api.directory import directory_bp
+
+    app.register_blueprint(directory_bp, url_prefix="/api/directory")
 
 
 def _register_core(app):
