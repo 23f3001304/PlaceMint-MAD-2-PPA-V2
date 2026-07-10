@@ -59,6 +59,18 @@ const routes = [
     component: () => import('../views/StudentOnboarding.vue'),
     meta: { roles: ['student'] },
   },
+  {
+    path: '/students/:id',
+    component: AppShell,
+    meta: { roles: ['admin', 'company'] },
+    children: [{ path: '', name: 'view-student', component: () => import('../views/directory/PublicStudent.vue') }],
+  },
+  {
+    path: '/companies/:id',
+    component: AppShell,
+    meta: { roles: ['admin', 'company', 'student'] },
+    children: [{ path: '', name: 'view-company', component: () => import('../views/directory/PublicCompany.vue') }],
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
