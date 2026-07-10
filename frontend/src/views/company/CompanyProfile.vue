@@ -7,13 +7,15 @@ import { useAsync } from '../../composables/useAsync'
 import { toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
+import Icon from '../../components/Icon.vue'
+import LinksEditor from '../../components/forms/LinksEditor.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run } = useAsync()
 const profile = ref({})
 const editing = ref(false)
-const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '' })
+const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', links: [] })
 
 const initial = computed(() => (profile.value.company_name || '?')[0].toUpperCase())
 
@@ -24,6 +26,7 @@ function openEdit() {
   Object.assign(form, {
     company_name: p.company_name, industry: p.industry || '', location: p.location || '',
     hr_contact: p.hr_contact || '', website: p.website || '', description: p.description || '',
+    links: (p.links || []).map((l) => ({ ...l })),
   })
   editing.value = true
 }
@@ -61,6 +64,11 @@ async function save() {
         </dd>
         <dt class="col-4 col-sm-3 text-muted">Drives</dt><dd class="col-8 col-sm-9">{{ profile.drive_count }}</dd>
       </dl>
+      <div v-if="(profile.links || []).length" class="d-flex flex-wrap gap-2 mt-3">
+        <a v-for="l in profile.links" :key="l.url" :href="l.url" target="_blank" rel="noopener" class="link-chip">
+          <Icon name="link" :size="13" /> {{ l.label }}
+        </a>
+      </div>
     </div>
 
     <div class="surface-card p-4">
@@ -72,6 +80,10 @@ async function save() {
 
     <AppModal v-model="editing" title="Edit company profile" size="lg">
       <CompanyFields :form="form" />
+      <div class="mt-3">
+        <label class="form-label">Links <span class="text-muted small">(website, LinkedIn, careers page) - up to 4</span></label>
+        <LinksEditor v-model="form.links" :max="4" />
+      </div>
       <template #footer>
         <button class="btn btn-outline-secondary" @click="editing = false">Cancel</button>
         <button class="btn btn-3d-accent" @click="save">Save changes</button>
