@@ -1,33 +1,43 @@
 <script setup>
+// Multi-step profile wizard, used both for first-time onboarding and for the
+// full "Edit profile" flow (?edit=1) so the two stay identical.
 import { computed, onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import * as studentApi from '../api/endpoints/student'
 import { authState, setProfile } from '../store/auth'
 import { useAsync } from '../composables/useAsync'
 import { toastError, toastSuccess } from '../store/ui'
 import FormField from '../components/forms/FormField.vue'
+import LinksEditor from '../components/forms/LinksEditor.vue'
+import { BRANCHES, GRAD_YEARS } from '../data/options'
 
 const { run } = useAsync()
 const router = useRouter()
+const route = useRoute()
+const editing = computed(() => !!route.query.edit)
 
-const STEPS = ['Education', 'Skills', 'Experience', 'Resume']
+const STEPS = ['Basics', 'Skills', 'Experience', 'Links', 'Resume']
 const step = ref(0)
 const isLast = computed(() => step.value === STEPS.length - 1)
 
-const form = reactive({ degree: '', cgpa: '', phone: '', skills: '', experience: '' })
+const form = reactive({
+  name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '',
+  skills: '', experience: '', links: [],
+})
 const uploading = ref(false)
 const hasResume = ref(false)
 
 onMounted(() => {
   const p = authState.profile
-  if (p) {
-    Object.assign(form, {
-      degree: p.degree || '', cgpa: p.cgpa || '', phone: p.phone || '',
-      skills: (p.skills || []).join(', '), experience: p.experience || '',
-    })
-    hasResume.value = p.has_resume
-  }
+  if (!p) return
+  Object.assign(form, {
+    name: p.name || '', branch: p.branch || '', degree: p.degree || '', cgpa: p.cgpa || '',
+    grad_year: p.grad_year || '', phone: p.phone || '',
+    skills: (p.skills || []).join(', '), experience: p.experience || '',
+    links: (p.links || []).map((l) => ({ ...l })),
+  })
+  hasResume.value = p.has_resume
 })
 
 function next() { if (step.value < STEPS.length - 1) step.value++ }
@@ -54,8 +64,12 @@ async function onResume(e) {
 async function finish() {
   const p = (await run(() => studentApi.updateProfile({ ...form, onboarded: true }))).data
   setProfile(p)
-  toastSuccess('Profile saved')
-  router.push('/student')
+  toastSuccess(editing.value ? 'Profile updated' : 'Profile saved')
+  router.push(editing.value ? '/student/profile' : '/student')
+}
+function cancelOrSkip() {
+  if (editing.value) router.push('/student/profile')
+  else finish()
 }
 </script>
 
@@ -63,7 +77,7 @@ async function finish() {
   <div class="onb silk-bg">
     <div class="onb-card motion-fade-up">
       <div class="brand-mark fs-4 mb-1">PlaceMint</div>
-      <h1 class="h4 mb-1">Set up your profile</h1>
+      <h1 class="h4 mb-1">{{ editing ? 'Edit your profile' : 'Set up your profile' }}</h1>
       <p class="text-muted mb-4">A complete profile unlocks drive eligibility and helps companies find you.</p>
 
       <ol class="stepper mb-4">
@@ -74,9 +88,12 @@ async function finish() {
       </ol>
 
       <div v-show="step === 0" class="row gx-3">
-        <div class="col-12"><FormField id="odeg" v-model="form.degree" label="Degree" placeholder="B.Tech Computer Science" /></div>
-        <div class="col-6"><FormField id="ocgpa" v-model="form.cgpa" label="CGPA" type="number" step="0.01" hint="Required to check drive eligibility" /></div>
-        <div class="col-6"><FormField id="ophone" v-model="form.phone" label="Phone" /></div>
+        <div class="col-12"><FormField id="oname" v-model="form.name" label="Full name" required /></div>
+        <div class="col-md-6"><FormField id="obranch" v-model="form.branch" label="Branch" type="select" :options="BRANCHES" /></div>
+        <div class="col-md-6"><FormField id="odeg" v-model="form.degree" label="Degree" placeholder="B.Tech" /></div>
+        <div class="col-6"><FormField id="ocgpa" v-model="form.cgpa" label="CGPA" type="number" step="0.01" hint="Checks drive eligibility" /></div>
+        <div class="col-6"><FormField id="ogy" v-model="form.grad_year" label="Grad year" type="select" :options="GRAD_YEARS" /></div>
+        <div class="col-12"><FormField id="ophone" v-model="form.phone" label="Phone" /></div>
       </div>
       <div v-show="step === 1">
         <FormField id="oskills" v-model="form.skills" label="Your skills" type="textarea" hint="Comma separated" placeholder="Python, SQL, React, Machine Learning" />
@@ -84,7 +101,11 @@ async function finish() {
       <div v-show="step === 2">
         <FormField id="oexp" v-model="form.experience" label="Experience" type="textarea" placeholder="Internships, projects, roles and what you built..." />
       </div>
-      <div v-show="step === 3" class="upload-zone">
+      <div v-show="step === 3">
+        <label class="form-label">Links <span class="text-muted small">(portfolio, LinkedIn, X, GitHub)</span></label>
+        <LinksEditor v-model="form.links" :max="3" />
+      </div>
+      <div v-show="step === 4" class="upload-zone">
         <label class="btn btn-outline-secondary mb-0">
           {{ uploading ? 'Uploading...' : (hasResume ? 'Replace resume' : 'Upload resume') }}
           <input type="file" accept=".pdf,.doc,.docx" hidden @change="onResume" />
@@ -96,9 +117,9 @@ async function finish() {
       <div class="d-flex justify-content-between align-items-center mt-4">
         <button class="btn btn-link text-muted p-0" :disabled="step === 0" @click="back">Back</button>
         <div class="d-flex gap-3 align-items-center">
-          <button class="btn btn-link text-muted p-0" @click="finish">Skip for now</button>
+          <button class="btn btn-link text-muted p-0" @click="cancelOrSkip">{{ editing ? 'Cancel' : 'Skip for now' }}</button>
           <button v-if="!isLast" class="btn btn-3d-accent px-4" @click="next">Continue</button>
-          <button v-else class="btn btn-3d-accent px-4" @click="finish">Finish</button>
+          <button v-else class="btn btn-3d-accent px-4" @click="finish">{{ editing ? 'Save' : 'Finish' }}</button>
         </div>
       </div>
     </div>

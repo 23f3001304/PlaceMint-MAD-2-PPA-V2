@@ -1,47 +1,32 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import * as studentApi from '../../api/endpoints/student'
 import { openDoc } from '../../api/client'
 import { setProfile } from '../../store/auth'
 import { useAsync } from '../../composables/useAsync'
 import { toastError, toastSuccess } from '../../store/ui'
-import AppModal from '../../components/overlays/AppModal.vue'
-import FormField from '../../components/forms/FormField.vue'
 import Icon from '../../components/Icon.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
-import { BRANCHES, GRAD_YEARS } from '../../data/options'
 
 const { run } = useAsync()
+const router = useRouter()
 const profile = ref({})
-const editing = ref(false)
 const uploading = ref(false)
-const form = reactive({ name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '', skills: '', experience: '' })
 
 const initial = computed(() => (profile.value.name || '?')[0].toUpperCase())
 const completeness = computed(() => {
   const p = profile.value
-  const checks = [p.name, p.branch, p.degree, p.cgpa, p.grad_year, p.phone, (p.skills || []).length, p.experience, p.has_resume]
+  const checks = [p.name, p.branch, p.degree, p.cgpa, p.grad_year, p.phone,
+    (p.skills || []).length, p.experience, (p.links || []).length, p.has_resume]
   return Math.round((checks.filter(Boolean).length / checks.length) * 100)
 })
 
 onMounted(async () => { profile.value = (await run(studentApi.profile)).data })
 
-function openEdit() {
-  const p = profile.value
-  Object.assign(form, {
-    name: p.name, branch: p.branch, degree: p.degree || '', cgpa: p.cgpa || '',
-    grad_year: p.grad_year, phone: p.phone || '', skills: (p.skills || []).join(', '), experience: p.experience || '',
-  })
-  editing.value = true
-}
-async function save() {
-  const p = (await run(() => studentApi.updateProfile({ ...form }))).data
-  profile.value = p
-  setProfile(p)
-  editing.value = false
-  toastSuccess('Profile updated')
-}
+function editProfile() { router.push({ name: 'student-onboarding', query: { edit: 1 } }) }
+
 async function onResume(e) {
   const file = e.target.files[0]
   if (!file) return
@@ -63,16 +48,16 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
 </script>
 
 <template>
-  <div class="motion-fade-up" style="max-width: 860px">
+  <div class="motion-fade-up">
     <PageHeader title="My profile" subtitle="How companies and the placement cell see you">
-      <template #actions><button class="btn btn-3d-accent" @click="openEdit">Edit profile</button></template>
+      <template #actions><button class="btn btn-3d-accent" @click="editProfile">Edit profile</button></template>
     </PageHeader>
 
     <div class="surface-card profile-hero mb-3">
       <div class="hero-cover"></div>
       <div class="hero-body">
-        <div class="hero-top">
-          <span class="avatar-xl">{{ initial }}</span>
+        <span class="avatar-xl">{{ initial }}</span>
+        <div class="hero-heading">
           <div class="hero-id">
             <h2 class="h4 mb-1">{{ profile.name }}</h2>
             <div class="text-mono small text-muted">{{ profile.roll_no }} · {{ profile.branch }} · {{ profile.degree || 'Degree not set' }}</div>
@@ -96,7 +81,7 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
       </div>
       <div v-else class="empty-row">
         <span>No skills added yet</span>
-        <button class="btn btn-sm btn-outline-secondary" @click="openEdit">Add skills</button>
+        <button class="btn btn-sm btn-outline-secondary" @click="editProfile">Add skills</button>
       </div>
     </div>
 
@@ -105,7 +90,20 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
       <p v-if="profile.experience" class="mb-0" style="white-space: pre-line">{{ profile.experience }}</p>
       <div v-else class="empty-row">
         <span>No experience added yet</span>
-        <button class="btn btn-sm btn-outline-secondary" @click="openEdit">Add experience</button>
+        <button class="btn btn-sm btn-outline-secondary" @click="editProfile">Add experience</button>
+      </div>
+    </div>
+
+    <div class="surface-card p-4 mb-3">
+      <h3 class="sec-head"><span class="sec-ico"><Icon name="link" :size="15" /></span>Links</h3>
+      <div v-if="(profile.links || []).length" class="d-flex flex-wrap gap-2">
+        <a v-for="l in profile.links" :key="l.url" :href="l.url" target="_blank" rel="noopener" class="link-chip">
+          <Icon name="link" :size="13" /> {{ l.label }}
+        </a>
+      </div>
+      <div v-else class="empty-row">
+        <span>No links added yet</span>
+        <button class="btn btn-sm btn-outline-secondary" @click="editProfile">Add links</button>
       </div>
     </div>
 
@@ -130,23 +128,6 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
         <input type="file" accept=".pdf,.doc,.docx" hidden @change="onResume" />
       </label>
     </div>
-
-    <AppModal v-model="editing" title="Edit profile" size="lg">
-      <div class="row gx-3">
-        <div class="col-md-8"><FormField id="ename" v-model="form.name" label="Full name" required /></div>
-        <div class="col-md-4"><FormField id="ebranch" v-model="form.branch" label="Branch" type="select" :options="BRANCHES" /></div>
-        <div class="col-md-4"><FormField id="edeg" v-model="form.degree" label="Degree" /></div>
-        <div class="col-6 col-md-4"><FormField id="ecgpa" v-model="form.cgpa" label="CGPA" type="number" step="0.01" /></div>
-        <div class="col-6 col-md-4"><FormField id="egy" v-model="form.grad_year" label="Grad year" type="select" :options="GRAD_YEARS" /></div>
-        <div class="col-md-6"><FormField id="ephone" v-model="form.phone" label="Phone" /></div>
-        <div class="col-md-6"><FormField id="eskills" v-model="form.skills" label="Skills" hint="Comma separated" /></div>
-        <div class="col-12"><FormField id="eexp" v-model="form.experience" label="Experience" type="textarea" /></div>
-      </div>
-      <template #footer>
-        <button class="btn btn-outline-secondary" @click="editing = false">Cancel</button>
-        <button class="btn btn-3d-accent" @click="save">Save changes</button>
-      </template>
-    </AppModal>
   </div>
 </template>
 
@@ -163,14 +144,15 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
   background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
   background-size: 16px 16px;
 }
-.hero-body { padding: 0 clamp(1.25rem, 3vw, 2rem) 1.5rem; }
-.hero-top { display: flex; align-items: flex-end; gap: 1rem; margin-top: -38px; }
+.hero-body { position: relative; padding: 0 clamp(1.25rem, 3vw, 2rem) 1.5rem; }
 .avatar-xl {
-  width: 76px; height: 76px; border-radius: 50%; background: var(--ppa-accent); color: #fff; flex: none;
+  position: absolute; top: -38px; left: clamp(1.25rem, 3vw, 2rem);
+  width: 76px; height: 76px; border-radius: 50%; background: var(--ppa-accent); color: #fff;
   display: grid; place-items: center; font-weight: 800; font-size: 1.9rem; font-family: var(--ppa-font-display);
   border: 4px solid var(--ppa-surface); box-shadow: 0 8px 20px rgba(20, 17, 15, 0.16);
 }
-.hero-id { flex: 1; padding-bottom: 0.35rem; min-width: 0; }
+.hero-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding: 0.85rem 0 0 92px; }
+.hero-id { min-width: 0; }
 .ring {
   --pct: 0; width: 62px; height: 62px; border-radius: 50%; flex: none; position: relative;
   background: conic-gradient(var(--ppa-accent) calc(var(--pct) * 1%), var(--ppa-surface-sunk) 0);

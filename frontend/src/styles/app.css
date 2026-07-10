@@ -168,3 +168,9 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 .resume-drop:hover { border-color: var(--ppa-accent); background: #eef5f0; color: var(--ppa-accent); }
+.link-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none;
+  background: var(--ppa-surface-sunk); border: 1px solid var(--ppa-border); border-radius: 999px;
+  padding: 0.35rem 0.8rem; font-weight: 600; font-size: 0.85rem; color: var(--ppa-ink);
+}
+.link-chip:hover { border-color: var(--ppa-accent); color: var(--ppa-accent); }
