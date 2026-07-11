@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import * as adminApi from '../../api/endpoints/admin'
 import { useAsync } from '../../composables/useAsync'
@@ -13,6 +14,7 @@ import SelectMenu from '../../components/inputs/SelectMenu.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
+const router = useRouter()
 const rows = ref([])
 const filters = reactive({ q: '', status: '' })
 const detail = reactive({ open: false, data: null })
@@ -122,6 +124,9 @@ function askDelete(c) {
           <li v-if="!(detail.data.drives || []).length" class="text-muted py-2">No drives yet.</li>
         </ul>
       </div>
+      <template #footer>
+        <button class="btn btn-3d-accent" @click="router.push(`/companies/${detail.data.id}`)">Open full profile</button>
+      </template>
     </AppModal>
 
     <ConfirmDialog

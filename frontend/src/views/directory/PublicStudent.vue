@@ -7,7 +7,6 @@ import { useRoute, useRouter } from 'vue-router'
 import * as directoryApi from '../../api/directory'
 import { openDoc } from '../../api/client'
 import { useAsync } from '../../composables/useAsync'
-import { toastSuccess } from '../../store/ui'
 import Icon from '../../components/Icon.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
@@ -23,19 +22,14 @@ const initial = computed(() => (p.value.name || '?')[0].toUpperCase())
 
 onMounted(async () => { bundle.value = (await run(() => directoryApi.student(route.params.id))).data })
 
-function share() {
-  navigator.clipboard?.writeText(window.location.href)
-  toastSuccess('Profile link copied')
-}
 function viewResume() { openDoc(`/documents/resume/${p.value.id}`) }
 function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 </script>
 
 <template>
-  <div v-if="bundle" class="motion-fade-up" style="max-width: 900px">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+  <div v-if="bundle" class="motion-fade-up">
+    <div class="mb-3">
       <button class="btn btn-sm btn-outline-secondary" @click="router.back()"><Icon name="chevron" :size="14" style="transform: rotate(90deg)" /> Back</button>
-      <button class="btn btn-sm btn-outline-secondary" @click="share"><Icon name="link" :size="14" /> Share</button>
     </div>
 
     <div class="surface-card p-4 mb-3">
@@ -45,7 +39,6 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
           <h1 class="h3 mb-1">{{ p.name }}</h1>
           <div class="text-mono small text-muted">{{ p.roll_no }} · {{ p.branch }} · {{ p.degree || 'Degree not set' }}</div>
         </div>
-        <button v-if="p.has_resume" class="btn btn-3d-accent btn-sm" @click="viewResume">View resume</button>
       </div>
       <div class="facts mt-3">
         <div><span class="stat-label">CGPA</span><b>{{ p.cgpa || 'NA' }}</b></div>
@@ -72,11 +65,16 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
         <h3 class="sec-head"><span class="sec-ico"><Icon name="briefcase" :size="15" /></span>Experience</h3>
         <p class="mb-0" :class="{ 'text-muted': !p.experience }" style="white-space: pre-line">{{ p.experience || 'No experience listed.' }}</p>
       </div>
-      <div v-if="(p.links || []).length" class="surface-card p-4">
+      <div v-if="(p.links || []).length" class="surface-card p-4 mb-3">
         <h3 class="sec-head"><span class="sec-ico"><Icon name="link" :size="15" /></span>Links</h3>
         <div class="d-flex flex-wrap gap-2">
           <a v-for="l in p.links" :key="l.url" :href="l.url" target="_blank" rel="noopener" class="link-chip"><Icon name="link" :size="13" /> {{ l.label }}</a>
         </div>
+      </div>
+      <div class="surface-card p-4">
+        <h3 class="sec-head"><span class="sec-ico"><Icon name="file" :size="15" /></span>Resume</h3>
+        <button v-if="p.has_resume" class="btn btn-3d-accent btn-sm" @click="viewResume"><Icon name="download" :size="14" /> View resume</button>
+        <p v-else class="text-muted mb-0">No resume uploaded.</p>
       </div>
     </template>
 

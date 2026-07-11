@@ -6,7 +6,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 import * as directoryApi from '../../api/directory'
 import { useAsync } from '../../composables/useAsync'
-import { toastSuccess } from '../../store/ui'
 import Icon from '../../components/Icon.vue'
 
 const { run } = useAsync()
@@ -19,18 +18,12 @@ const drives = computed(() => bundle.value?.drives || [])
 const initial = computed(() => (p.value.company_name || '?')[0].toUpperCase())
 
 onMounted(async () => { bundle.value = (await run(() => directoryApi.company(route.params.id))).data })
-
-function share() {
-  navigator.clipboard?.writeText(window.location.href)
-  toastSuccess('Company link copied')
-}
 </script>
 
 <template>
-  <div v-if="bundle" class="motion-fade-up" style="max-width: 900px">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+  <div v-if="bundle" class="motion-fade-up">
+    <div class="mb-3">
       <button class="btn btn-sm btn-outline-secondary" @click="router.back()"><Icon name="chevron" :size="14" style="transform: rotate(90deg)" /> Back</button>
-      <button class="btn btn-sm btn-outline-secondary" @click="share"><Icon name="link" :size="14" /> Share</button>
     </div>
 
     <div class="surface-card p-4 mb-3">
