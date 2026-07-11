@@ -9,12 +9,20 @@ import ConfirmDialog from '../../components/overlays/ConfirmDialog.vue'
 import DataTable from '../../components/ui/DataTable.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import SearchBar from '../../components/forms/SearchBar.vue'
+import SelectMenu from '../../components/inputs/SelectMenu.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
 const rows = ref([])
 const filters = reactive({ q: '', status: '' })
 const detail = reactive({ open: false, data: null })
+
+const STATUS_OPTIONS = [
+  { value: '', label: 'All statuses' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
+]
 const confirm = reactive({ open: false, action: null, message: '' })
 
 const columns = [
@@ -61,12 +69,7 @@ function askDelete(c) {
   <div class="motion-fade-up">
     <PageHeader title="Companies" subtitle="Approve, search and moderate companies">
       <template #actions>
-        <select v-model="filters.status" class="form-select" style="width: auto">
-          <option value="">All statuses</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
+        <SelectMenu v-model="filters.status" :options="STATUS_OPTIONS" placeholder="All statuses" />
         <SearchBar v-model="filters.q" placeholder="Search name or industry" />
       </template>
     </PageHeader>
