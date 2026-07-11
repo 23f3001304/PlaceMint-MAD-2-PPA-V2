@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import * as adminApi from '../../api/endpoints/admin'
 import { useAsync } from '../../composables/useAsync'
@@ -12,6 +13,7 @@ import SearchBar from '../../components/forms/SearchBar.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
+const router = useRouter()
 const rows = ref([])
 const q = ref('')
 const detail = reactive({ open: false, data: null })
@@ -90,6 +92,9 @@ function askDelete(s) {
         </li>
         <li v-if="!(detail.data?.applications || []).length" class="text-muted py-2">No applications yet.</li>
       </ul>
+      <template #footer>
+        <button class="btn btn-3d-accent" @click="router.push(`/students/${detail.data.id}`)">Open full profile</button>
+      </template>
     </AppModal>
 
     <ConfirmDialog

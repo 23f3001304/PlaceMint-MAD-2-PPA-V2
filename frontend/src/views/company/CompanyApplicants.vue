@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 import * as companyApi from '../../api/endpoints/company'
 import { openDoc } from '../../api/client'
@@ -14,6 +15,7 @@ import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
 const { exporting, runExport } = useExport()
+const router = useRouter()
 const drives = ref([])
 const selectedDrive = ref('')
 const applicants = ref([])
@@ -93,11 +95,14 @@ function viewResume(studentId) { openDoc(`/documents/resume/${studentId}`) }
             {{ review.app.student.roll_no }} · {{ review.app.student.branch }} ·
             CGPA {{ review.app.student.cgpa }} · Grad {{ review.app.student.grad_year }}
           </div>
-          <button
-            v-if="review.app.student.has_resume" class="btn btn-sm btn-outline-secondary"
-            @click="viewResume(review.app.student.id)"
-          >View resume</button>
-          <span v-else class="small text-muted">No resume uploaded</span>
+          <div class="d-flex gap-2 align-items-center">
+            <button
+              v-if="review.app.student.has_resume" class="btn btn-sm btn-outline-secondary"
+              @click="viewResume(review.app.student.id)"
+            >View resume</button>
+            <span v-else class="small text-muted">No resume</span>
+            <button class="btn btn-sm btn-outline-secondary" @click="router.push(`/students/${review.app.student.id}`)">Full profile</button>
+          </div>
         </div>
         <div v-if="(review.app.student.skills || []).length" class="mt-2">
           <span v-for="sk in review.app.student.skills" :key="sk" class="badge text-bg-light me-1 mb-1">{{ sk }}</span>

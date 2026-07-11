@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import * as studentApi from '../../api/endpoints/student'
 import { authState } from '../../store/auth'
@@ -12,6 +13,7 @@ import StatTile from '../../components/ui/StatTile.vue'
 import CompleteProfileNotice from '../../components/CompleteProfileNotice.vue'
 
 const { run } = useAsync()
+const router = useRouter()
 const stats = ref({})
 const orgs = ref([])
 const org = reactive({ open: false, data: null })
@@ -73,6 +75,9 @@ async function apply(drive) {
         </div>
         <p v-if="!(org.data?.drives || []).length" class="text-muted">No open drives right now.</p>
       </div>
+      <template #footer>
+        <button v-if="org.data" class="btn btn-outline-secondary" @click="router.push(`/companies/${org.data.id}`)">View company page</button>
+      </template>
     </AppModal>
   </div>
 </template>
