@@ -56,8 +56,8 @@ async function submit() {
 
     <form novalidate @submit.prevent="submit">
       <div class="row gx-3">
-        <div class="col-md-6"><FormField id="remail" v-model="form.email" label="Email" type="email" required autocomplete="email" /></div>
-        <div class="col-md-6"><FormField id="rpass" v-model="form.password" label="Password" type="password" hint="At least 6 characters" required autocomplete="new-password" /></div>
+        <div class="col-md-6"><FormField id="remail" v-model="form.email" label="Email" type="email" placeholder="you@college.edu" required autocomplete="email" /></div>
+        <div class="col-md-6"><FormField id="rpass" v-model="form.password" label="Password" type="password" placeholder="Create a password" hint="At least 6 characters" required autocomplete="new-password" /></div>
       </div>
       <StudentFields v-if="role === 'student'" :form="form" />
       <CompanyFields v-else :form="form" />

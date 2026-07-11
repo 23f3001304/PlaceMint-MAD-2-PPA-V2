@@ -30,7 +30,8 @@ def company_profile(company_id):
     if company is None:
         raise NotFoundError("Company not found")
     drives = [d.to_dict() for d in company.drives if d.status == DriveStatus.APPROVED]
-    return ok({"profile": company.to_dict(), "drives": drives})
+    applicants = _company_applicants(company) if current_user().role == Role.ADMIN else None
+    return ok({"profile": company.to_dict(), "drives": drives, "applicants": applicants})
 
 
 def _activity(student) -> dict:
@@ -38,3 +39,21 @@ def _activity(student) -> dict:
         "applications": [a.to_dict(include_drive=True) for a in student.applications],
         "placements": [p.to_dict() for p in student.placements],
     }
+
+
+def _company_applicants(company) -> list:
+    """Every student who applied to any of this company's drives (admin view)."""
+    rows = []
+    for drive in company.drives:
+        for a in drive.applications:
+            s = a.student
+            rows.append({
+                "id": a.id,
+                "student_id": s.id if s else None,
+                "student_name": s.name if s else None,
+                "roll_no": s.roll_no if s else None,
+                "drive": drive.job_title,
+                "status": a.status,
+                "applied_at": a.applied_at.isoformat() if a.applied_at else None,
+            })
+    return rows

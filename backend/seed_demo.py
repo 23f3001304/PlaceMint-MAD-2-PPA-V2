@@ -63,12 +63,28 @@ def seed():
         data = _company("data@demo.com", "DataForge", "Analytics", "Hyderabad", ApprovalStatus.APPROVED)
         _company("build@demo.com", "BuildRight", "Core Engineering", "Pune", ApprovalStatus.PENDING)
 
+        tech.website = "https://technova.example"
+        tech.links = [
+            {"label": "LinkedIn", "url": "https://linkedin.com/company/technova"},
+            {"label": "Careers", "url": "https://technova.example/careers"},
+        ]
+        tech.people = [
+            {"name": "Riya Kapoor", "role": "CEO", "url": "https://linkedin.com/in/riyakapoor"},
+            {"name": "Sequoia India", "role": "Lead investor", "url": "https://www.sequoiacap.com"},
+        ]
+        data.website = "https://dataforge.example"
+        data.people = [{"name": "Arvind Rao", "role": "Founder & CEO", "url": ""}]
+
         s = [
             _student("ada@demo.com", "Ada Iyer", "CS23B001", "CSE", 8.9, 2026, ["Python", "React", "SQL"]),
             _student("rahul@demo.com", "Rahul Nair", "CS23B002", "CSE", 7.2, 2026, ["Java", "SQL"]),
             _student("sara@demo.com", "Sara Khan", "EC23B003", "ECE", 8.1, 2026, ["C++", "MATLAB"]),
             _student("meera@demo.com", "Meera Das", "DS23B004", "Data Science", 9.1, 2026, ["Python", "SQL", "ML"]),
             _student("arjun@demo.com", "Arjun Menon", "AI23B005", "AI & ML", 7.8, 2027, ["Python", "PyTorch"]),
+        ]
+        s[0].links = [
+            {"label": "LinkedIn", "url": "https://linkedin.com/in/adaiyer"},
+            {"label": "GitHub", "url": "https://github.com/adaiyer"},
         ]
 
         d_sde = _drive(tech, "Summer SDE 2026", "SDE Intern", ["CSE", "AI & ML"], 7.0, [2026, 2027], 12, ["Python", "React"], DriveStatus.APPROVED, 20)

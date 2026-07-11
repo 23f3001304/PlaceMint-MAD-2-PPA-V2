@@ -9,13 +9,14 @@ import AppModal from '../../components/overlays/AppModal.vue'
 import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
 import Icon from '../../components/Icon.vue'
 import LinksEditor from '../../components/forms/LinksEditor.vue'
+import PeopleEditor from '../../components/inputs/PeopleEditor.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run } = useAsync()
 const profile = ref({})
 const editing = ref(false)
-const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', links: [] })
+const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', links: [], people: [] })
 
 const initial = computed(() => (profile.value.company_name || '?')[0].toUpperCase())
 
@@ -27,6 +28,7 @@ function openEdit() {
     company_name: p.company_name, industry: p.industry || '', location: p.location || '',
     hr_contact: p.hr_contact || '', website: p.website || '', description: p.description || '',
     links: (p.links || []).map((l) => ({ ...l })),
+    people: (p.people || []).map((x) => ({ ...x })),
   })
   editing.value = true
 }
@@ -71,6 +73,20 @@ async function save() {
       </div>
     </div>
 
+    <div v-if="(profile.people || []).length" class="surface-card p-4 mb-3">
+      <h3 class="sec-head"><span class="sec-ico"><Icon name="users" :size="15" /></span>Key people</h3>
+      <div class="d-flex flex-wrap gap-3">
+        <div v-for="person in profile.people" :key="person.name" class="person-card">
+          <span class="person-avatar">{{ (person.name || '?')[0].toUpperCase() }}</span>
+          <div>
+            <div class="fw-semibold">{{ person.name }}</div>
+            <div class="small text-muted">{{ person.role }}</div>
+            <a v-if="person.url" :href="person.url" target="_blank" rel="noopener" class="small">View profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="surface-card p-4">
       <h3 class="h6 mb-2">About</h3>
       <p class="mb-0" :class="{ 'text-muted': !profile.description }" style="white-space: pre-line">
@@ -83,6 +99,10 @@ async function save() {
       <div class="mt-3">
         <label class="form-label">Links <span class="text-muted small">(website, LinkedIn, careers page) - up to 4</span></label>
         <LinksEditor v-model="form.links" :max="4" />
+      </div>
+      <div class="mt-3">
+        <label class="form-label">Key people <span class="text-muted small">(CEO, investor, founder) - up to 2</span></label>
+        <PeopleEditor v-model="form.people" :max="2" />
       </div>
       <template #footer>
         <button class="btn btn-outline-secondary" @click="editing = false">Cancel</button>

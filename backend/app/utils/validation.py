@@ -66,3 +66,22 @@ def clean_links(value, cap: int) -> list:
         if len(out) >= cap:
             break
     return out
+
+
+def clean_people(value, cap: int) -> list:
+    """Normalize key-people entries {name, role, url} (a company's CEO, investor,
+    etc.); require a name, force a scheme on any link, and cap the count."""
+    out = []
+    for item in value or []:
+        if not isinstance(item, dict):
+            continue
+        name = (item.get("name") or "").strip()
+        if not name:
+            continue
+        url = (item.get("url") or "").strip()
+        if url and not url.startswith(("http://", "https://")):
+            url = "https://" + url
+        out.append({"name": name[:80], "role": (item.get("role") or "").strip()[:60], "url": url[:200]})
+        if len(out) >= cap:
+            break
+    return out

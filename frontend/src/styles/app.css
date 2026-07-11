@@ -174,3 +174,11 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
   padding: 0.35rem 0.8rem; font-weight: 600; font-size: 0.85rem; color: var(--ppa-ink);
 }
 .link-chip:hover { border-color: var(--ppa-accent); color: var(--ppa-accent); }
+.person-card {
+  display: flex; align-items: center; gap: 0.7rem; min-width: 220px;
+  background: var(--ppa-surface-sunk); border: 1px solid var(--ppa-border); border-radius: 0.7rem; padding: 0.7rem 0.9rem;
+}
+.person-avatar {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--ppa-accent); color: #fff; flex: none;
+  display: grid; place-items: center; font-weight: 800; font-family: var(--ppa-font-display);
+}
