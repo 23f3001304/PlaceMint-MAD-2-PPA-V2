@@ -9,6 +9,7 @@ const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
   options: { type: Array, default: () => [] },
   placeholder: { type: String, default: 'Select...' },
+  block: { type: Boolean, default: false },
 })
 const emit = defineEmits(['update:modelValue'])
 
@@ -27,7 +28,7 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); docum
 </script>
 
 <template>
-  <div ref="root" class="sel" :class="{ open }">
+  <div ref="root" class="sel" :class="{ open, block }">
     <button type="button" class="sel-btn" @click="open = !open">
       <span :class="{ 'text-muted': !current }">{{ current?.label ?? placeholder }}</span>
       <Icon name="chevron" :size="16" class="sel-caret" />
@@ -43,6 +44,8 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); docum
 
 <style scoped>
 .sel { position: relative; display: inline-block; }
+.sel.block { display: block; }
+.sel.block .sel-btn { width: 100%; min-width: 0; }
 .sel-btn {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 0.6rem;
   min-width: 11rem; padding: 0.55rem 0.85rem; cursor: pointer; font-weight: 500;

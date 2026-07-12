@@ -11,12 +11,12 @@ from app.models.constants import Role
 from app.services.stats.student_stats import student_dashboard
 from app.utils.errors import ApiError
 from app.utils.responses import ok
-from app.utils.validation import as_float, as_int, as_list, clean_links
+from app.utils.validation import as_float, as_int, as_list, clean_links, clean_phone
 
 student_profile_bp = Blueprint("student_profile", __name__)
 
 _ALLOWED_RESUME = {".pdf", ".doc", ".docx"}
-_EDITABLE_STR = ("name", "branch", "degree", "phone", "experience")
+_EDITABLE_STR = ("name", "branch", "degree", "experience")
 
 
 @student_profile_bp.get("")
@@ -40,8 +40,13 @@ def update_profile():
     for field in _EDITABLE_STR:
         if field in data:
             setattr(student, field, (data[field] or "").strip() or None)
+    if "phone" in data:
+        student.phone = clean_phone(data.get("phone"))
     if "cgpa" in data:
-        student.cgpa = as_float(data.get("cgpa"), "CGPA")
+        cgpa = as_float(data.get("cgpa"), "CGPA")
+        if not 0 <= cgpa <= 10:
+            raise ApiError("CGPA must be between 0 and 10")
+        student.cgpa = cgpa
     if "grad_year" in data:
         student.grad_year = as_int(data.get("grad_year"), "graduation year", student.grad_year)
     if "skills" in data:

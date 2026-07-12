@@ -91,9 +91,15 @@ function cancelOrSkip() {
         <div class="col-12"><FormField id="oname" v-model="form.name" label="Full name" required /></div>
         <div class="col-md-6"><FormField id="obranch" v-model="form.branch" label="Branch" type="select" :options="BRANCHES" /></div>
         <div class="col-md-6"><FormField id="odeg" v-model="form.degree" label="Degree" placeholder="B.Tech" /></div>
-        <div class="col-6"><FormField id="ocgpa" v-model="form.cgpa" label="CGPA" type="number" step="0.01" hint="Checks drive eligibility" /></div>
+        <div class="col-6"><FormField id="ocgpa" v-model="form.cgpa" label="CGPA" type="number" step="0.01" min="0" max="10" hint="Out of 10, checks eligibility" /></div>
         <div class="col-6"><FormField id="ogy" v-model="form.grad_year" label="Grad year" type="select" :options="GRAD_YEARS" /></div>
-        <div class="col-12"><FormField id="ophone" v-model="form.phone" label="Phone" /></div>
+        <div class="col-12">
+          <FormField
+            id="ophone" v-model="form.phone" label="Phone" type="tel" inputmode="tel"
+            placeholder="10-digit mobile" pattern="(\+91[- ]?)?[6-9]\d{9}"
+            title="Enter a valid Indian mobile number (10 digits starting 6-9)"
+          />
+        </div>
       </div>
       <div v-show="step === 1">
         <FormField id="oskills" v-model="form.skills" label="Your skills" type="textarea" hint="Comma separated" placeholder="Python, SQL, React, Machine Learning" />

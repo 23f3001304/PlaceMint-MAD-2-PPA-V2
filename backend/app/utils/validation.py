@@ -68,6 +68,22 @@ def clean_links(value, cap: int) -> list:
     return out
 
 
+def clean_phone(value):
+    """Sanitize and validate an Indian mobile number: strip non-digits, drop a
+    +91/0 prefix, and require 10 digits starting 6-9. Empty is allowed (None)."""
+    raw = (value or "").strip()
+    if not raw:
+        return None
+    digits = re.sub(r"\D", "", raw)
+    if len(digits) == 12 and digits.startswith("91"):
+        digits = digits[2:]
+    elif len(digits) == 11 and digits.startswith("0"):
+        digits = digits[1:]
+    if not re.fullmatch(r"[6-9]\d{9}", digits):
+        raise ApiError("Enter a valid Indian mobile number (10 digits starting 6-9)")
+    return digits
+
+
 def clean_people(value, cap: int) -> list:
     """Normalize key-people entries {name, role, url} (a company's CEO, investor,
     etc.); require a name, force a scheme on any link, and cap the count."""
