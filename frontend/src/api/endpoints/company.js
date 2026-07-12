@@ -3,6 +3,7 @@ import { del, get, patch, post } from '../client'
 export const stats = () => get('/company/stats')
 export const profile = () => get('/company/profile')
 export const updateProfile = (data) => patch('/company/profile', data)
+export const uploadLogo = (formData) => post('/company/logo', formData)
 
 export const drives = () => get('/company/drives')
 export const createDrive = (data) => post('/company/drives', data)

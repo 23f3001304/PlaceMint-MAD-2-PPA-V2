@@ -9,10 +9,24 @@ from app.auth.rbac import current_user
 from app.extensions import db
 from app.models.constants import Role
 from app.models.placement.placement import Placement
+from app.models.profiles.company import CompanyProfile
 from app.models.profiles.student import StudentProfile
 from app.utils.errors import ForbiddenError, NotFoundError
 
 documents_bp = Blueprint("documents", __name__)
+
+
+@documents_bp.get("/logo/<int:company_id>")
+def company_logo(company_id):
+    # Public: a company logo is branding shown on shareable pages, so an <img>
+    # tag (which cannot send an auth header) can load it directly.
+    company = db.session.get(CompanyProfile, company_id)
+    if company is None or not company.logo_path:
+        raise NotFoundError("No logo")
+    path = os.path.join(current_app.config["UPLOAD_FOLDER"], company.logo_path)
+    if not os.path.exists(path):
+        raise NotFoundError("Logo file is missing")
+    return send_file(path)
 
 
 def _can_view_resume(user, student) -> bool:

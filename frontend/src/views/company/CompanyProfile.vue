@@ -4,7 +4,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import * as companyApi from '../../api/endpoints/company'
 import { setProfile } from '../../store/auth'
 import { useAsync } from '../../composables/useAsync'
-import { toastSuccess } from '../../store/ui'
+import { toastError, toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
 import Icon from '../../components/Icon.vue'
@@ -19,8 +19,30 @@ const editing = ref(false)
 const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', links: [], people: [] })
 
 const initial = computed(() => (profile.value.company_name || '?')[0].toUpperCase())
+const logoUploading = ref(false)
+const logoV = ref(0)
+const logoSrc = computed(() => `/api/documents/logo/${profile.value.id}?v=${logoV.value}`)
 
 onMounted(async () => { profile.value = (await run(companyApi.profile)).data })
+
+async function onLogo(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  logoUploading.value = true
+  try {
+    const fd = new FormData()
+    fd.append('logo', file)
+    const { data } = await companyApi.uploadLogo(fd)
+    profile.value = data
+    setProfile(data)
+    logoV.value++
+    toastSuccess('Logo updated')
+  } catch (err) {
+    toastError(err.message)
+  } finally {
+    logoUploading.value = false
+  }
+}
 
 function openEdit() {
   const p = profile.value
@@ -49,7 +71,10 @@ async function save() {
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3 mb-3">
-        <span class="avatar-lg">{{ initial }}</span>
+        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }">
+          <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
+          <template v-else>{{ initial }}</template>
+        </span>
         <div>
           <h2 class="h4 mb-0">{{ profile.company_name }}</h2>
           <div class="small text-muted">{{ profile.industry || 'Industry not set' }}<span v-if="profile.location"> · {{ profile.location }}</span></div>
@@ -95,6 +120,16 @@ async function save() {
     </div>
 
     <AppModal v-model="editing" title="Edit company profile" size="lg">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }">
+          <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
+          <template v-else>{{ initial }}</template>
+        </span>
+        <label class="btn btn-outline-secondary btn-sm mb-0">
+          {{ logoUploading ? 'Uploading...' : (profile.has_logo ? 'Replace logo' : 'Upload logo') }}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden @change="onLogo" />
+        </label>
+      </div>
       <CompanyFields :form="form" />
       <div class="mt-3">
         <label class="form-label">Links <span class="text-muted small">(website, LinkedIn, careers page) - up to 4</span></label>
@@ -114,7 +149,9 @@ async function save() {
 
 <style scoped>
 .avatar-lg {
-  width: 56px; height: 56px; border-radius: 50%; background: var(--ppa-accent); color: #fff;
-  display: grid; place-items: center; font-weight: 700; font-size: 1.4rem; font-family: var(--ppa-font-display);
+  width: 56px; height: 56px; border-radius: 50%; background: var(--ppa-accent); color: #fff; overflow: hidden;
+  display: grid; place-items: center; font-weight: 700; font-size: 1.4rem; font-family: var(--ppa-font-display); flex: none;
 }
+.avatar-lg.has-logo { background: #fff; border: 1px solid var(--ppa-border); }
+.logo-img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 </style>

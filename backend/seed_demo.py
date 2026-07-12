@@ -23,8 +23,7 @@ def _company(email, name, industry, location, status):
     user = User(email=email, password_hash=PW, role=Role.COMPANY)
     user.company_profile = CompanyProfile(
         company_name=name, industry=industry, location=location,
-        approval_status=status, hr_contact=f"hr@{email.split('@')[1]}",
-        description=f"{name} hires from campus every year.",
+        approval_status=status, hr_contact=f"careers@{name.lower()}.demo",
     )
     db.session.add(user)
     return user.company_profile
@@ -43,7 +42,7 @@ def _student(email, name, roll, branch, cgpa, year, skills):
 def _drive(company, drive_name, title, branches, cgpa, years, pkg, skills, status, days):
     drive = PlacementDrive(
         company=company, drive_name=drive_name, job_title=title,
-        job_description=f"{title} role at {company.company_name}. Great team, real impact.",
+        job_description=f"{title} at {company.company_name}. Real ownership, strong mentorship and impact from day one.",
         eligible_branches=branches, min_cgpa=cgpa, eligible_years=years,
         package_lpa=pkg, skills_required=skills, min_experience=0,
         location=company.location, status=status,
@@ -55,25 +54,37 @@ def _drive(company, drive_name, title, branches, cgpa, years, pkg, skills, statu
 
 def seed():
     with create_app().app_context():
-        if CompanyProfile.query.filter_by(company_name="TechNova").first():
+        if CompanyProfile.query.filter_by(company_name="Google").first():
             print("Demo data already present.")
             return
 
-        tech = _company("tech@demo.com", "TechNova", "Software", "Bengaluru", ApprovalStatus.APPROVED)
-        data = _company("data@demo.com", "DataForge", "Analytics", "Hyderabad", ApprovalStatus.APPROVED)
-        _company("build@demo.com", "BuildRight", "Core Engineering", "Pune", ApprovalStatus.PENDING)
+        google = _company("careers@google.demo", "Google", "Software", "Bengaluru", ApprovalStatus.APPROVED)
+        google.website = "https://careers.google.com"
+        google.links = [
+            {"label": "Careers", "url": "https://careers.google.com"},
+            {"label": "LinkedIn", "url": "https://linkedin.com/company/google"},
+        ]
+        google.people = [
+            {"name": "Sundar Pichai", "role": "CEO", "url": "https://linkedin.com/in/sundarpichai"},
+            {"name": "Ruth Porat", "role": "President & CIO", "url": ""},
+        ]
+        google.description = "Google builds products that help billions of people. Campus hires ship on Search, Cloud, Android and AI."
 
-        tech.website = "https://technova.example"
-        tech.links = [
-            {"label": "LinkedIn", "url": "https://linkedin.com/company/technova"},
-            {"label": "Careers", "url": "https://technova.example/careers"},
-        ]
-        tech.people = [
-            {"name": "Riya Kapoor", "role": "CEO", "url": "https://linkedin.com/in/riyakapoor"},
-            {"name": "Sequoia India", "role": "Lead investor", "url": "https://www.sequoiacap.com"},
-        ]
-        data.website = "https://dataforge.example"
-        data.people = [{"name": "Arvind Rao", "role": "Founder & CEO", "url": ""}]
+        msft = _company("careers@microsoft.demo", "Microsoft", "Software", "Hyderabad", ApprovalStatus.APPROVED)
+        msft.website = "https://careers.microsoft.com"
+        msft.links = [{"label": "Careers", "url": "https://careers.microsoft.com"}]
+        msft.people = [{"name": "Satya Nadella", "role": "Chairman & CEO", "url": "https://linkedin.com/in/satyanadella"}]
+        msft.description = "Microsoft empowers every person and organization to achieve more, across Azure, Windows and Microsoft 365."
+
+        amazon = _company("careers@amazon.demo", "Amazon", "E-commerce", "Bengaluru", ApprovalStatus.APPROVED)
+        amazon.website = "https://amazon.jobs"
+        amazon.links = [{"label": "amazon.jobs", "url": "https://amazon.jobs"}]
+        amazon.people = [{"name": "Andy Jassy", "role": "CEO", "url": ""}]
+        amazon.description = "Amazon is guided by customer obsession. Engineers own systems that serve millions at scale."
+
+        meta = _company("careers@meta.demo", "Meta", "Software", "Gurugram", ApprovalStatus.PENDING)
+        meta.website = "https://metacareers.com"
+        meta.description = "Meta is building the future of connection, from apps used by billions to AI and the metaverse."
 
         s = [
             _student("ada@demo.com", "Ada Iyer", "CS23B001", "CSE", 8.9, 2026, ["Python", "React", "SQL"]),
@@ -87,26 +98,27 @@ def seed():
             {"label": "GitHub", "url": "https://github.com/adaiyer"},
         ]
 
-        d_sde = _drive(tech, "Summer SDE 2026", "SDE Intern", ["CSE", "AI & ML"], 7.0, [2026, 2027], 12, ["Python", "React"], DriveStatus.APPROVED, 20)
-        d_be = _drive(tech, "Backend Hire", "Backend Engineer", ["CSE"], 7.5, [2026], 18, ["Python", "SQL"], DriveStatus.APPROVED, 12)
-        d_da = _drive(data, "Analytics Drive", "Data Analyst", ["Data Science", "CSE", "AI & ML"], 7.5, [2026], 14, ["SQL", "Python"], DriveStatus.APPROVED, 8)
-        _drive(data, "ML Intern Hunt", "ML Intern", ["AI & ML", "Data Science"], 8.0, [2026, 2027], 10, ["Python"], DriveStatus.PENDING, 25)
+        g_swe = _drive(google, "SWE Intern 2026", "Software Engineer Intern", ["CSE", "AI & ML", "Data Science"], 7.5, [2026, 2027], 24, ["Python", "Data Structures"], DriveStatus.APPROVED, 20)
+        g_l3 = _drive(google, "Software Engineer L3", "Software Engineer", ["CSE"], 8.0, [2026], 32, ["C++", "System Design"], DriveStatus.APPROVED, 14)
+        m_sde = _drive(msft, "SDE Intern", "SDE Intern", ["CSE", "ECE"], 7.0, [2026, 2027], 20, ["C#", "Algorithms"], DriveStatus.APPROVED, 10)
+        a_sde = _drive(amazon, "SDE-1 Hire", "SDE-1", ["CSE", "Data Science", "AI & ML"], 7.5, [2026], 28, ["Java", "AWS"], DriveStatus.APPROVED, 8)
+        _drive(meta, "PE Intern", "Production Engineer Intern", ["CSE"], 8.0, [2026, 2027], 26, ["Linux", "Python"], DriveStatus.PENDING, 25)
 
         db.session.flush()
         db.session.add_all([
-            Application(student=s[0], drive=d_sde, status=ApplicationStatus.SHORTLISTED),
-            Application(student=s[0], drive=d_be, status=ApplicationStatus.APPLIED),
-            Application(student=s[1], drive=d_sde, status=ApplicationStatus.APPLIED),
-            Application(student=s[3], drive=d_da, status=ApplicationStatus.PLACED),
-            Application(student=s[4], drive=d_sde, status=ApplicationStatus.APPLIED),
-            Application(student=s[4], drive=d_da, status=ApplicationStatus.SHORTLISTED),
+            Application(student=s[0], drive=g_swe, status=ApplicationStatus.SHORTLISTED),
+            Application(student=s[0], drive=g_l3, status=ApplicationStatus.APPLIED),
+            Application(student=s[1], drive=g_swe, status=ApplicationStatus.APPLIED),
+            Application(student=s[3], drive=a_sde, status=ApplicationStatus.PLACED),
+            Application(student=s[4], drive=g_swe, status=ApplicationStatus.APPLIED),
+            Application(student=s[4], drive=m_sde, status=ApplicationStatus.SHORTLISTED),
         ])
         db.session.add(Placement(
-            student=s[3], company=data, drive=d_da, position="Data Analyst",
-            salary_lpa=14, joining_date=date.today() + timedelta(days=120),
+            student=s[3], company=amazon, drive=a_sde, position="SDE-1",
+            salary_lpa=28, joining_date=date.today() + timedelta(days=120),
         ))
         db.session.commit()
-        print("Seeded demo data: 3 companies, 5 students, 4 drives, 6 applications, 1 placement.")
+        print("Seeded demo data: 4 companies, 5 students, 5 drives, 6 applications, 1 placement.")
 
 
 if __name__ == "__main__":

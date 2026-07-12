@@ -19,6 +19,7 @@ const p = computed(() => bundle.value?.profile || {})
 const drives = computed(() => bundle.value?.drives || [])
 const applicants = computed(() => bundle.value?.applicants)
 const initial = computed(() => (p.value.company_name || '?')[0].toUpperCase())
+const logoSrc = computed(() => `/api/documents/logo/${p.value.id}`)
 
 onMounted(async () => { bundle.value = (await run(() => directoryApi.company(route.params.id))).data })
 function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
@@ -32,7 +33,10 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3">
-        <span class="avatar-lg">{{ initial }}</span>
+        <span class="avatar-lg" :class="{ 'has-logo': p.has_logo }">
+          <img v-if="p.has_logo" :src="logoSrc" alt="" class="logo-img" />
+          <template v-else>{{ initial }}</template>
+        </span>
         <div class="flex-grow-1">
           <h1 class="h3 mb-1">{{ p.company_name }}</h1>
           <div class="small text-muted">{{ p.industry || 'Industry not set' }}<span v-if="p.location"> · {{ p.location }}</span></div>
@@ -96,7 +100,9 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 </template>
 
 <style scoped>
-.avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; }
+.avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; overflow: hidden; }
+.avatar-lg.has-logo { background: #fff; border: 1px solid var(--ppa-border); }
+.logo-img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .tabbar { display: inline-flex; gap: 0.25rem; background: var(--ppa-surface-sunk); padding: 0.25rem; border-radius: 999px; }
 .tabbar button { border: 0; background: transparent; padding: 0.4rem 1.15rem; border-radius: 999px; font-weight: 600; color: var(--ppa-muted); }
 .tabbar button.on { background: var(--ppa-surface); color: var(--ppa-ink); box-shadow: 0 1px 4px rgba(20, 17, 15, 0.1); }
