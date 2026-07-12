@@ -182,3 +182,14 @@ h1, h2, h3, .h1, .h2, .h3, .display-font {
   width: 42px; height: 42px; border-radius: 50%; background: var(--ppa-accent); color: #fff; flex: none;
   display: grid; place-items: center; font-weight: 800; font-family: var(--ppa-font-display);
 }
+
+/* Experience timeline (student profile + shareable page) */
+.timeline { position: relative; padding-left: 1.5rem; }
+.timeline::before { content: ''; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 2px; background: var(--ppa-border); }
+.tl-item { position: relative; padding-bottom: 1.15rem; }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute; left: -1.5rem; top: 4px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--ppa-accent); border: 2px solid var(--ppa-surface); box-shadow: 0 0 0 2px var(--ppa-border);
+}
+.tl-title { font-weight: 700; font-family: var(--ppa-font-display); }

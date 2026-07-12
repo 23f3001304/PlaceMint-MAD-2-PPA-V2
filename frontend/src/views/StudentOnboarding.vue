@@ -10,6 +10,7 @@ import { useAsync } from '../composables/useAsync'
 import { toastError, toastSuccess } from '../store/ui'
 import FormField from '../components/forms/FormField.vue'
 import LinksEditor from '../components/forms/LinksEditor.vue'
+import ExperienceEditor from '../components/inputs/ExperienceEditor.vue'
 import { BRANCHES, GRAD_YEARS } from '../data/options'
 
 const { run } = useAsync()
@@ -23,7 +24,7 @@ const isLast = computed(() => step.value === STEPS.length - 1)
 
 const form = reactive({
   name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '',
-  skills: '', experience: '', links: [],
+  skills: '', experiences: [], links: [],
 })
 const uploading = ref(false)
 const hasResume = ref(false)
@@ -34,7 +35,8 @@ onMounted(() => {
   Object.assign(form, {
     name: p.name || '', branch: p.branch || '', degree: p.degree || '', cgpa: p.cgpa || '',
     grad_year: p.grad_year || '', phone: p.phone || '',
-    skills: (p.skills || []).join(', '), experience: p.experience || '',
+    skills: (p.skills || []).join(', '),
+    experiences: (p.experiences || []).map((x) => ({ ...x })),
     links: (p.links || []).map((l) => ({ ...l })),
   })
   hasResume.value = p.has_resume
@@ -105,7 +107,8 @@ function cancelOrSkip() {
         <FormField id="oskills" v-model="form.skills" label="Your skills" type="textarea" hint="Comma separated" placeholder="Python, SQL, React, Machine Learning" />
       </div>
       <div v-show="step === 2">
-        <FormField id="oexp" v-model="form.experience" label="Experience" type="textarea" placeholder="Internships, projects, roles and what you built..." />
+        <label class="form-label">Experience <span class="text-muted small">(internships, projects, roles)</span></label>
+        <ExperienceEditor v-model="form.experiences" :max="6" />
       </div>
       <div v-show="step === 3">
         <label class="form-label">Links <span class="text-muted small">(portfolio, LinkedIn, X, GitHub)</span></label>

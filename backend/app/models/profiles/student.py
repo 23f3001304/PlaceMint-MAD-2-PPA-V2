@@ -19,7 +19,8 @@ class StudentProfile(db.Model, TimestampMixin):
     grad_year = db.Column(db.Integer, nullable=False, index=True)
     phone = db.Column(db.String(20))
     skills = db.Column(db.JSON, default=list)  # e.g. ["Python", "SQL"]
-    experience = db.Column(db.Text)  # internships / prior work, free text
+    experience = db.Column(db.Text)  # legacy free text / resume-parsed notes
+    experiences = db.Column(db.JSON, default=list)  # [{title, org, period, description}]
     links = db.Column(db.JSON, default=list)  # up to 3 {label, url} social links
     resume_path = db.Column(db.String(255))
     onboarded = db.Column(db.Boolean, default=False, nullable=False)
@@ -51,6 +52,7 @@ class StudentProfile(db.Model, TimestampMixin):
             "phone": self.phone,
             "skills": self.skills or [],
             "experience": self.experience,
+            "experiences": self.experiences or [],
             "links": self.links or [],
             "has_resume": bool(self.resume_path),
             "onboarded": self.onboarded,

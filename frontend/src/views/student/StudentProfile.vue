@@ -87,7 +87,14 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
 
     <div class="surface-card p-4 mb-3">
       <h3 class="sec-head"><span class="sec-ico"><Icon name="briefcase" :size="15" /></span>Experience</h3>
-      <p v-if="profile.experience" class="mb-0" style="white-space: pre-line">{{ profile.experience }}</p>
+      <div v-if="(profile.experiences || []).length" class="timeline">
+        <div v-for="(x, i) in profile.experiences" :key="i" class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">{{ x.title }}<span v-if="x.org" class="text-muted fw-normal"> · {{ x.org }}</span></div>
+          <div v-if="x.period" class="small text-muted">{{ x.period }}</div>
+          <p v-if="x.description" class="mb-0 mt-1" style="white-space: pre-line">{{ x.description }}</p>
+        </div>
+      </div>
       <div v-else class="empty-row">
         <span>No experience added yet</span>
         <button class="btn btn-sm btn-outline-secondary" @click="editProfile">Add experience</button>

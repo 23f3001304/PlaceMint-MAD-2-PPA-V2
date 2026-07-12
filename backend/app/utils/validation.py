@@ -84,6 +84,27 @@ def clean_phone(value):
     return digits
 
 
+def clean_experiences(value, cap: int = 8) -> list:
+    """Normalize experience entries {title, org, period, description}; a title is
+    required, the rest is trimmed and length-capped, and the list count is capped."""
+    out = []
+    for item in value or []:
+        if not isinstance(item, dict):
+            continue
+        title = (item.get("title") or "").strip()
+        if not title:
+            continue
+        out.append({
+            "title": title[:120],
+            "org": (item.get("org") or "").strip()[:120],
+            "period": (item.get("period") or "").strip()[:60],
+            "description": (item.get("description") or "").strip()[:1000],
+        })
+        if len(out) >= cap:
+            break
+    return out
+
+
 def clean_people(value, cap: int) -> list:
     """Normalize key-people entries {name, role, url} (a company's CEO, investor,
     etc.); require a name, force a scheme on any link, and cap the count."""

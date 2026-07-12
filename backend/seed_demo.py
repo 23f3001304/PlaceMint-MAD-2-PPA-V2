@@ -97,6 +97,12 @@ def seed():
             {"label": "LinkedIn", "url": "https://linkedin.com/in/adaiyer"},
             {"label": "GitHub", "url": "https://github.com/adaiyer"},
         ]
+        s[0].experiences = [
+            {"title": "Software Engineering Intern", "org": "Zomato", "period": "May-Jul 2024",
+             "description": "Built internal React dashboards and shipped an API that cut report time by 40%."},
+            {"title": "Open Source Contributor", "org": "CNCF", "period": "2023",
+             "description": "Bug fixes and docs for a Kubernetes tooling project."},
+        ]
 
         g_swe = _drive(google, "SWE Intern 2026", "Software Engineer Intern", ["CSE", "AI & ML", "Data Science"], 7.5, [2026, 2027], 24, ["Python", "Data Structures"], DriveStatus.APPROVED, 20)
         g_l3 = _drive(google, "Software Engineer L3", "Software Engineer", ["CSE"], 8.0, [2026], 32, ["C++", "System Design"], DriveStatus.APPROVED, 14)
