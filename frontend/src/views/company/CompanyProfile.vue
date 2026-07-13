@@ -7,6 +7,7 @@ import { useAsync } from '../../composables/useAsync'
 import { toastError, toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
+import FormField from '../../components/forms/FormField.vue'
 import { avatarTint } from '../../data/avatar'
 import Icon from '../../components/Icon.vue'
 import LinksEditor from '../../components/forms/LinksEditor.vue'
@@ -17,12 +18,14 @@ import StatusBadge from '../../components/ui/StatusBadge.vue'
 const { run } = useAsync()
 const profile = ref({})
 const editing = ref(false)
-const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', links: [], people: [] })
+const form = reactive({ company_name: '', industry: '', location: '', hr_contact: '', website: '', description: '', logo_url: '', links: [], people: [] })
 
 const initial = computed(() => (profile.value.company_name || '?')[0].toUpperCase())
 const logoUploading = ref(false)
 const logoV = ref(0)
-const logoSrc = computed(() => `/api/documents/logo/${profile.value.id}?v=${logoV.value}`)
+const logoSrc = computed(() => (profile.value.has_logo
+  ? `/api/documents/logo/${profile.value.id}?v=${logoV.value}`
+  : profile.value.logo_url || ''))
 
 onMounted(async () => { profile.value = (await run(companyApi.profile)).data })
 
@@ -50,6 +53,7 @@ function openEdit() {
   Object.assign(form, {
     company_name: p.company_name, industry: p.industry || '', location: p.location || '',
     hr_contact: p.hr_contact || '', website: p.website || '', description: p.description || '',
+    logo_url: p.logo_url || '',
     links: (p.links || []).map((l) => ({ ...l })),
     people: (p.people || []).map((x) => ({ ...x })),
   })
@@ -72,8 +76,8 @@ async function save() {
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3 mb-3">
-        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }" :style="profile.has_logo ? {} : { background: avatarTint(profile.company_name) }">
-          <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
+        <span class="avatar-lg" :class="{ 'has-logo': logoSrc }" :style="logoSrc ? {} : { background: avatarTint(profile.company_name) }">
+          <img v-if="logoSrc" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
         <div>
@@ -122,8 +126,8 @@ async function save() {
 
     <AppModal v-model="editing" title="Edit company profile" size="lg">
       <div class="d-flex align-items-center gap-3 mb-3">
-        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }" :style="profile.has_logo ? {} : { background: avatarTint(profile.company_name) }">
-          <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
+        <span class="avatar-lg" :class="{ 'has-logo': logoSrc }" :style="logoSrc ? {} : { background: avatarTint(profile.company_name) }">
+          <img v-if="logoSrc" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
         <label class="btn btn-outline-secondary btn-sm mb-0">
@@ -131,6 +135,10 @@ async function save() {
           <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden @change="onLogo" />
         </label>
       </div>
+      <FormField
+        id="logurl" v-model="form.logo_url" label="Logo URL" type="url"
+        placeholder="https://yourcompany.com/logo.png" hint="Paste a link to your logo image, or upload a file above."
+      />
       <CompanyFields :form="form" />
       <div class="mt-3">
         <label class="form-label">Links <span class="text-muted small">(website, LinkedIn, careers page) - up to 4</span></label>

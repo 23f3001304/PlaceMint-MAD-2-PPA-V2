@@ -20,7 +20,7 @@ const p = computed(() => bundle.value?.profile || {})
 const drives = computed(() => bundle.value?.drives || [])
 const applicants = computed(() => bundle.value?.applicants)
 const initial = computed(() => (p.value.company_name || '?')[0].toUpperCase())
-const logoSrc = computed(() => `/api/documents/logo/${p.value.id}`)
+const logoSrc = computed(() => (p.value.has_logo ? `/api/documents/logo/${p.value.id}` : p.value.logo_url || ''))
 
 onMounted(async () => { bundle.value = (await run(() => directoryApi.company(route.params.id))).data })
 function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
@@ -34,8 +34,8 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3">
-        <span class="avatar-lg" :class="{ 'has-logo': p.has_logo }" :style="p.has_logo ? {} : { background: avatarTint(p.company_name) }">
-          <img v-if="p.has_logo" :src="logoSrc" alt="" class="logo-img" />
+        <span class="avatar-lg" :class="{ 'has-logo': logoSrc }" :style="logoSrc ? {} : { background: avatarTint(p.company_name) }">
+          <img v-if="logoSrc" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
         <div class="flex-grow-1">

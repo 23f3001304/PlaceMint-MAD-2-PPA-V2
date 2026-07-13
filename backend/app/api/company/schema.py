@@ -12,6 +12,15 @@ def _clean(value):
     return cleaned or None
 
 
+def _clean_url(value):
+    url = (value or "").strip()
+    if not url:
+        return None
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    return url[:300]
+
+
 def _parse_date(value):
     try:
         return date.fromisoformat(value)
@@ -55,4 +64,6 @@ def clean_company_profile(data: dict) -> dict:
         out["links"] = clean_links(data.get("links"), 4)
     if "people" in data:
         out["people"] = clean_people(data.get("people"), 2)
+    if "logo_url" in data:
+        out["logo_url"] = _clean_url(data.get("logo_url"))
     return out
