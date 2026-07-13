@@ -7,6 +7,7 @@ import { useAsync } from '../../composables/useAsync'
 import { toastError, toastSuccess } from '../../store/ui'
 import AppModal from '../../components/overlays/AppModal.vue'
 import CompanyFields from '../../components/forms/registration/CompanyFields.vue'
+import { avatarTint } from '../../data/avatar'
 import Icon from '../../components/Icon.vue'
 import LinksEditor from '../../components/forms/LinksEditor.vue'
 import PeopleEditor from '../../components/inputs/PeopleEditor.vue'
@@ -71,7 +72,7 @@ async function save() {
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3 mb-3">
-        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }">
+        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }" :style="profile.has_logo ? {} : { background: avatarTint(profile.company_name) }">
           <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
@@ -121,7 +122,7 @@ async function save() {
 
     <AppModal v-model="editing" title="Edit company profile" size="lg">
       <div class="d-flex align-items-center gap-3 mb-3">
-        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }">
+        <span class="avatar-lg" :class="{ 'has-logo': profile.has_logo }" :style="profile.has_logo ? {} : { background: avatarTint(profile.company_name) }">
           <img v-if="profile.has_logo" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
@@ -149,7 +150,7 @@ async function save() {
 
 <style scoped>
 .avatar-lg {
-  width: 56px; height: 56px; border-radius: 50%; background: var(--ppa-accent); color: #fff; overflow: hidden;
+  width: 56px; height: 56px; border-radius: 16px; background: var(--ppa-accent); color: #fff; overflow: hidden;
   display: grid; place-items: center; font-weight: 700; font-size: 1.4rem; font-family: var(--ppa-font-display); flex: none;
 }
 .avatar-lg.has-logo { background: #fff; border: 1px solid var(--ppa-border); }

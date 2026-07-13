@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import * as directoryApi from '../../api/directory'
 import { useAsync } from '../../composables/useAsync'
+import { avatarTint } from '../../data/avatar'
 import Icon from '../../components/Icon.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
@@ -33,7 +34,7 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3">
-        <span class="avatar-lg" :class="{ 'has-logo': p.has_logo }">
+        <span class="avatar-lg" :class="{ 'has-logo': p.has_logo }" :style="p.has_logo ? {} : { background: avatarTint(p.company_name) }">
           <img v-if="p.has_logo" :src="logoSrc" alt="" class="logo-img" />
           <template v-else>{{ initial }}</template>
         </span>
@@ -100,7 +101,7 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 </template>
 
 <style scoped>
-.avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; overflow: hidden; }
+.avatar-lg { width: 60px; height: 60px; border-radius: 16px; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; overflow: hidden; }
 .avatar-lg.has-logo { background: #fff; border: 1px solid var(--ppa-border); }
 .logo-img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .tabbar { display: inline-flex; gap: 0.25rem; background: var(--ppa-surface-sunk); padding: 0.25rem; border-radius: 999px; }
