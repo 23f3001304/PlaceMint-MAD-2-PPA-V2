@@ -10,6 +10,7 @@ import { useAsync } from '../composables/useAsync'
 import { toastError, toastSuccess } from '../store/ui'
 import FormField from '../components/forms/FormField.vue'
 import LinksEditor from '../components/forms/LinksEditor.vue'
+import AvatarUpload from '../components/inputs/AvatarUpload.vue'
 import ItemListEditor from '../components/inputs/ItemListEditor.vue'
 import { BRANCHES, GRAD_YEARS } from '../data/options'
 
@@ -23,18 +24,23 @@ const step = ref(0)
 const isLast = computed(() => step.value === STEPS.length - 1)
 
 const form = reactive({
-  name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '',
+  name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '', photo_url: '',
   skills: '', experiences: [], projects: [], links: [],
 })
 const uploading = ref(false)
 const hasResume = ref(false)
+const photoUploading = ref(false)
+const photoV = ref(0)
+const photoSrc = computed(() => (authState.profile?.has_photo
+  ? `/api/documents/photo/${authState.profile.id}?v=${photoV.value}`
+  : form.photo_url))
 
 onMounted(() => {
   const p = authState.profile
   if (!p) return
   Object.assign(form, {
     name: p.name || '', branch: p.branch || '', degree: p.degree || '', cgpa: p.cgpa || '',
-    grad_year: p.grad_year || '', phone: p.phone || '',
+    grad_year: p.grad_year || '', phone: p.phone || '', photo_url: p.photo_url || '',
     skills: (p.skills || []).join(', '),
     experiences: (p.experiences || []).map((x) => ({ ...x })),
     projects: (p.projects || []).map((x) => ({ ...x })),
@@ -61,6 +67,21 @@ async function onResume(e) {
     toastError(err.message)
   } finally {
     uploading.value = false
+  }
+}
+
+async function onPhoto(file) {
+  photoUploading.value = true
+  try {
+    const fd = new FormData()
+    fd.append('photo', file)
+    setProfile((await studentApi.uploadPhoto(fd)).data)
+    photoV.value++
+    toastSuccess('Photo updated')
+  } catch (err) {
+    toastError(err.message)
+  } finally {
+    photoUploading.value = false
   }
 }
 
@@ -91,6 +112,12 @@ function cancelOrSkip() {
       </ol>
 
       <div v-show="step === 0" class="row gx-3">
+        <div class="col-12 mb-2">
+          <AvatarUpload
+            :model-value="form.photo_url" :src="photoSrc" :initial="(form.name || '?')[0].toUpperCase()"
+            :uploading="photoUploading" @update:model-value="form.photo_url = $event" @file="onPhoto"
+          />
+        </div>
         <div class="col-12"><FormField id="oname" v-model="form.name" label="Full name" required /></div>
         <div class="col-md-6"><FormField id="obranch" v-model="form.branch" label="Branch" type="select" :options="BRANCHES" /></div>
         <div class="col-md-6"><FormField id="odeg" v-model="form.degree" label="Degree" placeholder="B.Tech" /></div>

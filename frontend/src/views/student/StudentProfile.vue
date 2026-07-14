@@ -22,6 +22,7 @@ const completeness = computed(() => {
     (p.skills || []).length, p.experience, (p.links || []).length, p.has_resume]
   return Math.round((checks.filter(Boolean).length / checks.length) * 100)
 })
+const photoSrc = computed(() => (profile.value.has_photo ? `/api/documents/photo/${profile.value.id}` : profile.value.photo_url || ''))
 
 onMounted(async () => { profile.value = (await run(studentApi.profile)).data })
 
@@ -56,7 +57,10 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
     <div class="surface-card profile-hero mb-3">
       <div class="hero-cover"></div>
       <div class="hero-body">
-        <span class="avatar-xl">{{ initial }}</span>
+        <span class="avatar-xl">
+          <img v-if="photoSrc" :src="photoSrc" alt="" class="photo-img" />
+          <template v-else>{{ initial }}</template>
+        </span>
         <div class="hero-heading">
           <div class="hero-id">
             <h2 class="h4 mb-1">{{ profile.name }}</h2>
@@ -172,8 +176,9 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
   position: absolute; top: -38px; left: clamp(1.25rem, 3vw, 2rem);
   width: 76px; height: 76px; border-radius: 50%; background: var(--ppa-accent); color: #fff;
   display: grid; place-items: center; font-weight: 800; font-size: 1.9rem; font-family: var(--ppa-font-display);
-  border: 4px solid var(--ppa-surface); box-shadow: 0 8px 20px rgba(20, 17, 15, 0.16);
+  border: 4px solid var(--ppa-surface); box-shadow: 0 8px 20px rgba(20, 17, 15, 0.16); overflow: hidden;
 }
+.photo-img { width: 100%; height: 100%; object-fit: cover; }
 .hero-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding: 0.85rem 0 0 92px; }
 .hero-id { min-width: 0; }
 .ring {

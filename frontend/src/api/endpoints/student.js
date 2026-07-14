@@ -4,6 +4,7 @@ export const stats = () => get('/student/profile/stats')
 export const profile = () => get('/student/profile')
 export const updateProfile = (data) => patch('/student/profile', data)
 export const uploadResume = (formData) => post('/student/profile/resume', formData)
+export const uploadPhoto = (formData) => post('/student/profile/photo', formData)
 
 export const drives = (params) => get('/student/drives' + qs(params))
 export const driveDetail = (id) => get(`/student/drives/${id}`)

@@ -19,6 +19,7 @@ const tab = ref('profile')
 const p = computed(() => bundle.value?.profile || {})
 const activity = computed(() => bundle.value?.activity)
 const initial = computed(() => (p.value.name || '?')[0].toUpperCase())
+const photoSrc = computed(() => (p.value.has_photo ? `/api/documents/photo/${p.value.id}` : p.value.photo_url || ''))
 
 onMounted(async () => { bundle.value = (await run(() => directoryApi.student(route.params.id))).data })
 
@@ -34,7 +35,10 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 
     <div class="surface-card p-4 mb-3">
       <div class="d-flex align-items-center gap-3">
-        <span class="avatar-lg">{{ initial }}</span>
+        <span class="avatar-lg">
+          <img v-if="photoSrc" :src="photoSrc" alt="" class="photo-img" />
+          <template v-else>{{ initial }}</template>
+        </span>
         <div class="flex-grow-1">
           <h1 class="h3 mb-1">{{ p.name }}</h1>
           <div class="text-mono small text-muted">{{ p.roll_no }} · {{ p.branch }} · {{ p.degree || 'Degree not set' }}</div>
@@ -122,7 +126,8 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
 </template>
 
 <style scoped>
-.avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; }
+.avatar-lg { width: 60px; height: 60px; border-radius: 50%; background: var(--ppa-accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.5rem; font-family: var(--ppa-font-display); flex: none; overflow: hidden; }
+.photo-img { width: 100%; height: 100%; object-fit: cover; }
 .facts { display: flex; flex-wrap: wrap; gap: 1.75rem; border-top: 1px solid var(--ppa-border); padding-top: 1rem; }
 .facts b { display: block; margin-top: 0.1rem; font-family: var(--ppa-font-display); font-size: 1.05rem; }
 .tabbar { display: inline-flex; gap: 0.25rem; background: var(--ppa-surface-sunk); padding: 0.25rem; border-radius: 999px; }

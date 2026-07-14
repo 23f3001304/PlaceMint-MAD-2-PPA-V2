@@ -18,6 +18,8 @@ class StudentProfile(db.Model, TimestampMixin):
     cgpa = db.Column(db.Float, default=0.0, nullable=False)
     grad_year = db.Column(db.Integer, nullable=False, index=True)
     phone = db.Column(db.String(20))
+    photo_path = db.Column(db.String(255))  # uploaded profile photo
+    photo_url = db.Column(db.String(300))  # or an external photo URL
     skills = db.Column(db.JSON, default=list)  # e.g. ["Python", "SQL"]
     experience = db.Column(db.Text)  # legacy free text / resume-parsed notes
     experiences = db.Column(db.JSON, default=list)  # [{title, org, period, description}]
@@ -51,6 +53,8 @@ class StudentProfile(db.Model, TimestampMixin):
             "cgpa": self.cgpa,
             "grad_year": self.grad_year,
             "phone": self.phone,
+            "has_photo": bool(self.photo_path),
+            "photo_url": self.photo_url,
             "skills": self.skills or [],
             "experience": self.experience,
             "experiences": self.experiences or [],

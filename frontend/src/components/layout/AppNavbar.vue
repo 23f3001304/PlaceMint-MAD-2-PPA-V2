@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { authState, logout } from '../../store/auth'
+import { avatarTint } from '../../data/avatar'
 import Icon from '../Icon.vue'
 
 defineEmits(['toggle'])
@@ -17,6 +18,19 @@ const name = computed(
 const role = computed(() => authState.user?.role || '')
 const roleLabel = computed(() => role.value.charAt(0).toUpperCase() + role.value.slice(1))
 const initial = computed(() => (name.value[0] || 'U').toUpperCase())
+
+// Company chips mirror the profile avatar: uploaded logo, then logo URL, then a
+// deterministic brand-tile colour behind the initial.
+const logoSrc = computed(() => {
+  const p = authState.profile
+  if (!p) return ''
+  if (role.value === 'company') return p.has_logo ? `/api/documents/logo/${p.id}` : p.logo_url || ''
+  if (role.value === 'student') return p.has_photo ? `/api/documents/photo/${p.id}` : p.photo_url || ''
+  return ''
+})
+const tint = computed(() =>
+  (role.value === 'company' && authState.profile ? avatarTint(authState.profile.company_name) : ''),
+)
 
 function onDocClick(e) {
   if (root.value && !root.value.contains(e.target)) open.value = false
@@ -44,7 +58,10 @@ function signOut() {
 
     <div ref="root" class="user-menu">
       <button class="user-chip" @click="open = !open">
-        <span class="avatar">{{ initial }}</span>
+        <span class="avatar" :class="{ 'has-logo': logoSrc }" :style="!logoSrc && tint ? { background: tint } : {}">
+          <img v-if="logoSrc" :src="logoSrc" alt="" class="avatar-img" :class="{ photo: role === 'student' }" />
+          <template v-else>{{ initial }}</template>
+        </span>
         <span class="who d-none d-sm-flex">
           <span class="who-name">{{ name }}</span>
           <span class="who-role">{{ roleLabel }}</span>
@@ -78,10 +95,13 @@ function signOut() {
 }
 .user-chip:hover { background: var(--ppa-surface-sunk); }
 .avatar {
-  width: 34px; height: 34px; border-radius: 50%; color: #fff; display: grid; place-items: center;
+  width: 34px; height: 34px; border-radius: 50%; color: #fff; display: grid; place-items: center; overflow: hidden;
   font-weight: 700; font-size: 0.9rem; font-family: var(--ppa-font-display);
   background: linear-gradient(180deg, var(--ppa-accent-rim), var(--ppa-accent));
 }
+.avatar.has-logo { background: #fff; border: 1px solid var(--ppa-border); }
+.avatar-img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+.avatar-img.photo { object-fit: cover; padding: 0; }
 .who { flex-direction: column; line-height: 1.12; text-align: left; }
 .who-name { font-weight: 600; font-size: 0.85rem; }
 .who-role { color: var(--ppa-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; }

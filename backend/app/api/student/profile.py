@@ -18,6 +18,7 @@ from app.utils.validation import (
 student_profile_bp = Blueprint("student_profile", __name__)
 
 _ALLOWED_RESUME = {".pdf", ".doc", ".docx"}
+_ALLOWED_PHOTO = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
 _EDITABLE_STR = ("name", "branch", "degree", "experience")
 
 
@@ -44,6 +45,11 @@ def update_profile():
             setattr(student, field, (data[field] or "").strip() or None)
     if "phone" in data:
         student.phone = clean_phone(data.get("phone"))
+    if "photo_url" in data:
+        url = (data.get("photo_url") or "").strip()
+        if url and not url.startswith(("http://", "https://")):
+            url = "https://" + url
+        student.photo_url = url or None
     if "cgpa" in data:
         cgpa = as_float(data.get("cgpa"), "CGPA")
         if not 0 <= cgpa <= 10:
@@ -80,5 +86,22 @@ def upload_resume():
     filename = secure_filename(f"resume_{student.id}{ext}")
     file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
     student.resume_path = filename
+    db.session.commit()
+    return ok(student.to_dict())
+
+
+@student_profile_bp.post("/photo")
+@role_required(Role.STUDENT)
+def upload_photo():
+    student = current_student()
+    file = request.files.get("photo")
+    if file is None or not file.filename:
+        raise ApiError("No file provided")
+    ext = os.path.splitext(file.filename)[1].lower()
+    if ext not in _ALLOWED_PHOTO:
+        raise ApiError("Photo must be an image (PNG, JPG or WEBP)")
+    filename = secure_filename(f"photo_{student.id}{ext}")
+    file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
+    student.photo_path = filename
     db.session.commit()
     return ok(student.to_dict())

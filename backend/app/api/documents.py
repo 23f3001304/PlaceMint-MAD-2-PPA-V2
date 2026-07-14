@@ -40,6 +40,19 @@ def _can_view_resume(user, student) -> bool:
     return False
 
 
+@documents_bp.get("/photo/<int:student_id>")
+def student_photo(student_id):
+    # Public: a profile photo is shown on shareable pages, so an <img> tag (which
+    # cannot send an auth header) can load it directly.
+    student = db.session.get(StudentProfile, student_id)
+    if student is None or not student.photo_path:
+        raise NotFoundError("No photo")
+    path = os.path.join(current_app.config["UPLOAD_FOLDER"], student.photo_path)
+    if not os.path.exists(path):
+        raise NotFoundError("Photo file is missing")
+    return send_file(path)
+
+
 @documents_bp.get("/resume/<int:student_id>")
 @jwt_required()
 def resume(student_id):
