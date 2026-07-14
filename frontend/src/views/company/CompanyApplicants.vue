@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import * as companyApi from '../../api/endpoints/company'
@@ -11,6 +11,7 @@ import AppModal from '../../components/overlays/AppModal.vue'
 import DataTable from '../../components/ui/DataTable.vue'
 import FormField from '../../components/forms/FormField.vue'
 import PageHeader from '../../components/layout/PageHeader.vue'
+import SelectMenu from '../../components/inputs/SelectMenu.vue'
 import StatusBadge from '../../components/ui/StatusBadge.vue'
 
 const { run, loading } = useAsync()
@@ -20,6 +21,8 @@ const drives = ref([])
 const selectedDrive = ref('')
 const applicants = ref([])
 const review = reactive({ open: false, app: null, status: '', remarks: '', interview_at: '', interview_mode: '' })
+
+const driveOptions = computed(() => drives.value.map((d) => ({ value: d.id, label: `${d.job_title} (${d.applicant_count})` })))
 
 const STATUS_OPTIONS = ['shortlisted', 'interview', 'offer', 'rejected', 'placed']
 const columns = [
@@ -64,9 +67,7 @@ function viewResume(studentId) { openDoc(`/documents/resume/${studentId}`) }
   <div class="motion-fade-up">
     <PageHeader title="Applicants" subtitle="Review, shortlist, interview and select">
       <template #actions>
-        <select v-model="selectedDrive" class="form-select" style="width: auto">
-          <option v-for="d in drives" :key="d.id" :value="d.id">{{ d.job_title }} ({{ d.applicant_count }})</option>
-        </select>
+        <SelectMenu v-model="selectedDrive" :options="driveOptions" placeholder="Select a drive" />
         <button class="btn btn-outline-secondary" :disabled="exporting" @click="runExport">
           {{ exporting ? 'Exporting...' : 'Export CSV' }}
         </button>

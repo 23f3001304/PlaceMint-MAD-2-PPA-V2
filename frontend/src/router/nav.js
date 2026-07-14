@@ -11,7 +11,6 @@ const NAV = {
     { to: '/company/drives', label: 'Job Drives', icon: 'briefcase' },
     { to: '/company/applicants', label: 'Applicants', icon: 'users' },
     { to: '/company/profile', label: 'Company Profile', icon: 'building' },
-    { to: '/company/ats', label: 'Resume Screener', icon: 'file' },
   ],
   student: [
     { to: '/student', label: 'Dashboard', icon: 'dashboard' },

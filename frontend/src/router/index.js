@@ -38,7 +38,6 @@ const routes = [
       { path: 'drives', name: 'company-drives', component: () => import('../views/company/CompanyDrives.vue') },
       { path: 'applicants', name: 'company-applicants', component: () => import('../views/company/CompanyApplicants.vue') },
       { path: 'profile', name: 'company-profile', component: () => import('../views/company/CompanyProfile.vue') },
-      { path: 'ats', name: 'company-ats', component: () => import('../views/ResumeScreener.vue') },
     ],
   },
   {
