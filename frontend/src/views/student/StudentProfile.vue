@@ -102,6 +102,22 @@ function viewResume() { openDoc(`/documents/resume/${profile.value.id}`) }
     </div>
 
     <div class="surface-card p-4 mb-3">
+      <h3 class="sec-head"><span class="sec-ico"><Icon name="code" :size="15" /></span>Projects</h3>
+      <div v-if="(profile.projects || []).length" class="timeline">
+        <div v-for="(x, i) in profile.projects" :key="i" class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">{{ x.title }}<span v-if="x.period" class="text-muted fw-normal"> · {{ x.period }}</span></div>
+          <a v-if="x.link" :href="x.link" target="_blank" rel="noopener" class="small d-inline-block">{{ x.link }}</a>
+          <p v-if="x.description" class="mb-0 mt-1" style="white-space: pre-line">{{ x.description }}</p>
+        </div>
+      </div>
+      <div v-else class="empty-row">
+        <span>No projects added yet</span>
+        <button class="btn btn-sm btn-outline-secondary" @click="editProfile">Add projects</button>
+      </div>
+    </div>
+
+    <div class="surface-card p-4 mb-3">
       <h3 class="sec-head"><span class="sec-ico"><Icon name="link" :size="15" /></span>Links</h3>
       <div v-if="(profile.links || []).length" class="d-flex flex-wrap gap-2">
         <a v-for="l in profile.links" :key="l.url" :href="l.url" target="_blank" rel="noopener" class="link-chip">

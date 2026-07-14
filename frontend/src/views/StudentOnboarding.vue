@@ -10,7 +10,7 @@ import { useAsync } from '../composables/useAsync'
 import { toastError, toastSuccess } from '../store/ui'
 import FormField from '../components/forms/FormField.vue'
 import LinksEditor from '../components/forms/LinksEditor.vue'
-import ExperienceEditor from '../components/inputs/ExperienceEditor.vue'
+import ItemListEditor from '../components/inputs/ItemListEditor.vue'
 import { BRANCHES, GRAD_YEARS } from '../data/options'
 
 const { run } = useAsync()
@@ -18,13 +18,13 @@ const router = useRouter()
 const route = useRoute()
 const editing = computed(() => !!route.query.edit)
 
-const STEPS = ['Basics', 'Skills', 'Experience', 'Links', 'Resume']
+const STEPS = ['Basics', 'Skills', 'Experience', 'Projects', 'Links', 'Resume']
 const step = ref(0)
 const isLast = computed(() => step.value === STEPS.length - 1)
 
 const form = reactive({
   name: '', branch: '', degree: '', cgpa: '', grad_year: '', phone: '',
-  skills: '', experiences: [], links: [],
+  skills: '', experiences: [], projects: [], links: [],
 })
 const uploading = ref(false)
 const hasResume = ref(false)
@@ -37,6 +37,7 @@ onMounted(() => {
     grad_year: p.grad_year || '', phone: p.phone || '',
     skills: (p.skills || []).join(', '),
     experiences: (p.experiences || []).map((x) => ({ ...x })),
+    projects: (p.projects || []).map((x) => ({ ...x })),
     links: (p.links || []).map((l) => ({ ...l })),
   })
   hasResume.value = p.has_resume
@@ -107,14 +108,21 @@ function cancelOrSkip() {
         <FormField id="oskills" v-model="form.skills" label="Your skills" type="textarea" hint="Comma separated" placeholder="Python, SQL, React, Machine Learning" />
       </div>
       <div v-show="step === 2">
-        <label class="form-label">Experience <span class="text-muted small">(internships, projects, roles)</span></label>
-        <ExperienceEditor v-model="form.experiences" :max="6" />
+        <label class="form-label">Experience <span class="text-muted small">(jobs & internships)</span></label>
+        <ItemListEditor v-model="form.experiences" :max="6" />
       </div>
       <div v-show="step === 3">
+        <label class="form-label">Projects <span class="text-muted small">(up to 3)</span></label>
+        <ItemListEditor
+          v-model="form.projects" :max="3" title-placeholder="Project title"
+          second-key="link" second-placeholder="Link (GitHub / demo URL)" add-label="Add project"
+        />
+      </div>
+      <div v-show="step === 4">
         <label class="form-label">Links <span class="text-muted small">(portfolio, LinkedIn, X, GitHub)</span></label>
         <LinksEditor v-model="form.links" :max="3" />
       </div>
-      <div v-show="step === 4" class="upload-zone">
+      <div v-show="step === 5" class="upload-zone">
         <label class="btn btn-outline-secondary mb-0">
           {{ uploading ? 'Uploading...' : (hasResume ? 'Replace resume' : 'Upload resume') }}
           <input type="file" accept=".pdf,.doc,.docx" hidden @change="onResume" />

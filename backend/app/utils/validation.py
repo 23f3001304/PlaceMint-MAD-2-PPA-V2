@@ -105,6 +105,30 @@ def clean_experiences(value, cap: int = 8) -> list:
     return out
 
 
+def clean_projects(value, cap: int = 3) -> list:
+    """Normalize project entries {title, link, period, description}; a title is
+    required, any link gets a scheme, and the list count is capped (students: 3)."""
+    out = []
+    for item in value or []:
+        if not isinstance(item, dict):
+            continue
+        title = (item.get("title") or "").strip()
+        if not title:
+            continue
+        link = (item.get("link") or "").strip()
+        if link and not link.startswith(("http://", "https://")):
+            link = "https://" + link
+        out.append({
+            "title": title[:120],
+            "link": link[:200],
+            "period": (item.get("period") or "").strip()[:60],
+            "description": (item.get("description") or "").strip()[:1000],
+        })
+        if len(out) >= cap:
+            break
+    return out
+
+
 def clean_people(value, cap: int) -> list:
     """Normalize key-people entries {name, role, url} (a company's CEO, investor,
     etc.); require a name, force a scheme on any link, and cap the count."""

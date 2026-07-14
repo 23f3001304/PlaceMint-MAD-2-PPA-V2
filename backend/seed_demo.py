@@ -128,6 +128,10 @@ def seed():
             {"title": "Open Source Contributor", "org": "CNCF", "period": "2023",
              "description": "Bug fixes and docs for a Kubernetes tooling project."},
         ]
+        s[0].projects = [
+            {"title": "PlaceTrack", "link": "https://github.com/adaiyer/placetrack", "period": "2024", "description": "A Flask + Vue app to track applications and deadlines, with live charts and CSV export."},
+            {"title": "LeafML - disease classifier", "link": "https://github.com/adaiyer/leafml", "period": "2023", "description": "A PyTorch CNN at 94% accuracy on a public leaf-disease dataset, served via a small API."},
+        ]
 
         g_swe = _drive(google, "SWE Intern 2026", "Software Engineer Intern", ["CSE", "AI & ML", "Data Science"], 7.5, [2026, 2027], 24, ["Python", "Data Structures"], DriveStatus.APPROVED, 20)
         g_l3 = _drive(google, "Software Engineer L3", "Software Engineer", ["CSE"], 8.0, [2026], 32, ["C++", "System Design"], DriveStatus.APPROVED, 14)

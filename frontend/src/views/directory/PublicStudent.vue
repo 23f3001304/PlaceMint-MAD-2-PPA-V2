@@ -73,6 +73,17 @@ function fmtDate(s) { return s ? new Date(s).toLocaleDateString() : '' }
         </div>
         <p v-else class="text-muted mb-0">No experience listed.</p>
       </div>
+      <div v-if="(p.projects || []).length" class="surface-card p-4 mb-3">
+        <h3 class="sec-head"><span class="sec-ico"><Icon name="code" :size="15" /></span>Projects</h3>
+        <div class="timeline">
+          <div v-for="(x, i) in p.projects" :key="i" class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-title">{{ x.title }}<span v-if="x.period" class="text-muted fw-normal"> · {{ x.period }}</span></div>
+            <a v-if="x.link" :href="x.link" target="_blank" rel="noopener" class="small d-inline-block">{{ x.link }}</a>
+            <p v-if="x.description" class="mb-0 mt-1" style="white-space: pre-line">{{ x.description }}</p>
+          </div>
+        </div>
+      </div>
       <div v-if="(p.links || []).length" class="surface-card p-4 mb-3">
         <h3 class="sec-head"><span class="sec-ico"><Icon name="link" :size="15" /></span>Links</h3>
         <div class="d-flex flex-wrap gap-2">

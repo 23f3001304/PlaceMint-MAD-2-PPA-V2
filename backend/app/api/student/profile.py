@@ -11,7 +11,9 @@ from app.models.constants import Role
 from app.services.stats.student_stats import student_dashboard
 from app.utils.errors import ApiError
 from app.utils.responses import ok
-from app.utils.validation import as_float, as_int, as_list, clean_experiences, clean_links, clean_phone
+from app.utils.validation import (
+    as_float, as_int, as_list, clean_experiences, clean_links, clean_phone, clean_projects,
+)
 
 student_profile_bp = Blueprint("student_profile", __name__)
 
@@ -53,6 +55,8 @@ def update_profile():
         student.skills = as_list(data.get("skills"))
     if "experiences" in data:
         student.experiences = clean_experiences(data.get("experiences"))
+    if "projects" in data:
+        student.projects = clean_projects(data.get("projects"))
     if "links" in data:
         student.links = clean_links(data.get("links"), 3)
     if data.get("onboarded"):
