@@ -39,8 +39,8 @@ def _send_admin_report() -> None:
         ("Applications received", Application.query.count()),
         ("Students placed", Placement.query.count()),
     ])
-    html = _wrap(f"Placement report - {date.today():%B %Y}", body)
-    send_email(current_app.config["ADMIN_EMAIL"], f"Monthly placement report - {date.today():%B %Y}",
+    html = _wrap(f"Mint University placement report - {date.today():%B %Y}", body)
+    send_email(current_app.config["ADMIN_EMAIL"], f"Mint University placement report - {date.today():%B %Y}",
                html, text="Monthly placement report")
 
 

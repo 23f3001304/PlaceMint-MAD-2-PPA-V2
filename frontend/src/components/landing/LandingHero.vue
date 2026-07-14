@@ -39,8 +39,8 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
     <div class="hero-content">
       <h1 class="hero-title text-white">Campus placements,<br />run like <span class="hl">clockwork.</span></h1>
       <p class="hero-sub text-white">
-        One portal for the placement cell, companies, and students. Approvals, drives,
-        applications and offers, all in one place.
+        Mint University's portal for the placement cell, companies, and students. Approvals,
+        drives, applications and offers, all in one place.
       </p>
     </div>
 

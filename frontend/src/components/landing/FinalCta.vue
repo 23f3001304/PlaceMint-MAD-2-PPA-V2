@@ -7,7 +7,7 @@ import { RouterLink } from 'vue-router'
     <div class="cta-inner">
       <span class="cta-tag">Placement season, sorted</span>
       <h2 class="cta-title">Run placements <span class="cta-em">without the chaos.</span></h2>
-      <p class="cta-sub">Set up your institute, invite companies, and open the season in minutes.</p>
+      <p class="cta-sub">Bring Mint University's companies and students into one portal, and open the season in minutes.</p>
       <div class="cta-actions">
         <RouterLink to="/register" class="cta-btn cta-primary">Get started</RouterLink>
         <RouterLink to="/login" class="cta-btn cta-ghost">Sign in</RouterLink>

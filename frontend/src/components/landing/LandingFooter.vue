@@ -14,7 +14,7 @@ import DitherImage from '../media/DitherImage.vue'
         <div class="footer-brand">
           <BrandMark :size="42" :wordmark="false" class="text-white mb-2" />
           <p class="mb-0 muted" style="max-width: 24rem">
-            Campus placements without the spreadsheets. One place for the cell, companies, and students.
+            Mint University's placement portal. One place for the cell, companies and students, without the spreadsheets.
           </p>
         </div>
         <div class="footer-cols">
@@ -35,7 +35,7 @@ import DitherImage from '../media/DitherImage.vue'
       <div class="footer-word brand-mark">PlaceMint</div>
 
       <div class="footer-base">
-        <span class="muted small">Institute Placement Cell</span>
+        <span class="muted small">Mint University Placement Cell</span>
         <span class="muted small">Built with Flask · Vue · Bootstrap</span>
       </div>
     </div>

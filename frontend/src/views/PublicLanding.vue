@@ -9,7 +9,7 @@ const FEATURES = [
     eyebrow: 'Placement Cell',
     title: 'Oversight without the',
     highlight: 'spreadsheets.',
-    body: 'Approve companies and drives, moderate accounts, and watch institute-wide numbers update in real time.',
+    body: 'Approve companies and drives, moderate accounts, and watch Mint University-wide numbers update in real time.',
     bullets: [
       'Approve or reject companies and drives',
       'Blacklist or deactivate any account',

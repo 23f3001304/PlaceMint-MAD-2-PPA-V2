@@ -19,7 +19,7 @@ onMounted(async () => {
 
 <template>
   <div class="motion-fade-up">
-    <PageHeader title="Placement overview" subtitle="Institute-wide snapshot" />
+    <PageHeader title="Placement overview" subtitle="Mint University snapshot" />
 
     <div class="row g-3 mb-3">
       <div class="col-6 col-lg-3"><StatTile label="Students" :value="counts.students ?? 0" icon="users" /></div>

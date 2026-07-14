@@ -16,7 +16,7 @@ defineProps({ title: String, subtitle: String, wide: Boolean })
             companies, and students.
           </p>
         </div>
-        <div class="text-white small" style="opacity: 0.75">Institute Placement Cell</div>
+        <div class="text-white small" style="opacity: 0.75">Mint University Placement Cell</div>
       </div>
     </aside>
 
