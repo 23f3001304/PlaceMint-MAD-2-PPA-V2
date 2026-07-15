@@ -14,124 +14,95 @@ def _recipients(to) -> str:
 
 
 def wrap_html_template(subject: str, body_html: str) -> str:
-    has_h2 = "h2" in body_html.lower() or "<h2" in body_html.lower()
-    title_html = f"<h2>{subject}</h2>" if not has_h2 else ""
+    """Wrap body_html in the PlaceMint branded email shell.
+
+    Uses fully inlined styles so the design survives Gmail, Outlook and
+    every other client that strips ``<style>`` blocks.
+    """
     return f"""<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{subject}</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
-    body {{
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f0e8;
-      color: #14110f;
-      margin: 0;
-      padding: 0;
-      -webkit-font-smoothing: antialiased;
-    }}
-    .wrapper {{
-      width: 100%;
-      background-color: #f4f0e8;
-      padding: 40px 20px;
-      box-sizing: border-box;
-    }}
-    .container {{
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #ffffff;
-      border: 1px solid rgba(20, 17, 15, 0.1);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(20, 17, 15, 0.03);
-    }}
-    .header {{
-      background-color: #1f6b3a;
-      padding: 32px 40px;
-      text-align: left;
-      border-bottom: 4px solid #14472a;
-    }}
-    .logo {{
-      font-family: 'Bricolage Grotesque', 'IBM Plex Sans', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: #efe9dc;
-      margin: 0;
-      letter-spacing: -0.5px;
-    }}
-    .logo span {{
-      color: #efe9dc;
-      opacity: 0.8;
-      font-weight: 400;
-    }}
-    .content {{
-      padding: 40px;
-      line-height: 1.6;
-      font-size: 16px;
-    }}
-    .content h2 {{
-      font-family: 'Bricolage Grotesque', sans-serif;
-      color: #1f6b3a;
-      font-size: 22px;
-      margin-top: 0;
-      margin-bottom: 16px;
-    }}
-    .content p {{
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #14110f;
-    }}
-    .content strong {{
-      color: #1f6b3a;
-    }}
-    table {{
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #faf8f5;
-      margin: 20px 0;
-      border: 1px solid rgba(20, 17, 15, 0.08);
-      border-radius: 8px;
-    }}
-    th, td {{
-      padding: 12px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(20, 17, 15, 0.08);
-      font-size: 15px;
-    }}
-    tr:last-child td {{
-      border-bottom: none;
-    }}
-    .footer {{
-      background-color: #faf8f5;
-      padding: 24px 40px;
-      text-align: center;
-      border-top: 1px solid rgba(20, 17, 15, 0.08);
-      font-size: 13px;
-      color: #6b6357;
-    }}
-    .footer p {{
-      margin: 4px 0;
-    }}
-  </style>
+  <!--[if mso]>
+  <noscript><xml>
+    <o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings>
+  </xml></noscript>
+  <![endif]-->
 </head>
-<body>
-  <div class="wrapper">
-    <div class="container">
-      <div class="header">
-        <h1 class="logo">Place<span>Mint</span></h1>
-      </div>
-      <div class="content">
-        {title_html}
-        {body_html}
-      </div>
-      <div class="footer">
-        <p>This is an automated message from the PlaceMint Campus Recruitment Cell.</p>
-        <p>&copy; 2026 Mint University. All rights reserved.</p>
-      </div>
-    </div>
-  </div>
+<body style="margin:0;padding:0;background-color:#f4f0e8;font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14110f;-webkit-font-smoothing:antialiased;">
+
+  <!-- Outer wrapper -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#f4f0e8;padding:40px 0;">
+    <tr>
+      <td align="center">
+
+        <!-- Container card -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:600px;width:100%;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid rgba(20,17,15,0.10);box-shadow:0 4px 24px rgba(20,17,15,0.06);">
+
+          <!-- ======= HEADER ======= -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#1f6b3a 0%,#176030 100%);padding:28px 40px;border-bottom:4px solid #14472a;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <h1 style="margin:0;font-family:'Bricolage Grotesque','IBM Plex Sans',sans-serif;font-size:26px;font-weight:700;color:#efe9dc;letter-spacing:-0.5px;">
+                      Place<span style="opacity:0.75;font-weight:400;">Mint</span>
+                    </h1>
+                    <p style="margin:4px 0 0 0;font-size:13px;color:rgba(239,233,220,0.7);letter-spacing:0.3px;">
+                      Campus Recruitment Cell
+                    </p>
+                  </td>
+                  <td align="right" valign="middle">
+                    <span style="display:inline-block;width:38px;height:38px;border-radius:50%;background-color:rgba(239,233,220,0.15);text-align:center;line-height:38px;font-size:18px;">
+                      🎓
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ======= SUBJECT BAR ======= -->
+          <tr>
+            <td style="padding:24px 40px 0 40px;">
+              <h2 style="margin:0;font-family:'Bricolage Grotesque','IBM Plex Sans',sans-serif;font-size:21px;font-weight:700;color:#1f6b3a;line-height:1.3;">
+                {subject}
+              </h2>
+              <hr style="border:none;border-top:2px solid #e8e3d8;margin:16px 0 0 0;">
+            </td>
+          </tr>
+
+          <!-- ======= BODY CONTENT ======= -->
+          <tr>
+            <td style="padding:24px 40px 32px 40px;font-size:15px;line-height:1.65;color:#14110f;">
+              {body_html}
+            </td>
+          </tr>
+
+          <!-- ======= FOOTER ======= -->
+          <tr>
+            <td style="background-color:#faf8f5;padding:20px 40px;border-top:1px solid rgba(20,17,15,0.08);text-align:center;">
+              <p style="margin:0 0 4px 0;font-size:12px;color:#6b6357;">
+                This is an automated message from the PlaceMint Placement Portal.
+              </p>
+              <p style="margin:0;font-size:12px;color:#9b9589;">
+                &copy; 2026 Mint University &middot; All rights reserved
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Container card -->
+
+      </td>
+    </tr>
+  </table>
+  <!-- /Outer wrapper -->
+
 </body>
 </html>
 """
@@ -145,8 +116,8 @@ def send_email(to, subject: str, html: str, text: str | None = None) -> None:
         )
         return
 
-    # Wrap standard content in our beautiful template
-    if not html.strip().startswith("<!DOCTYPE html>"):
+    # Wrap standard content in our branded template
+    if not html.strip().lower().startswith("<!doctype"):
         html = wrap_html_template(subject, html)
 
     message = EmailMessage()
@@ -161,3 +132,4 @@ def send_email(to, subject: str, html: str, text: str | None = None) -> None:
         if cfg.get("SMTP_USER"):
             server.login(cfg["SMTP_USER"], cfg["SMTP_PASSWORD"])
         server.send_message(message)
+
