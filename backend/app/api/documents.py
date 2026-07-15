@@ -1,9 +1,11 @@
 """Role-aware document serving: student resumes and generated offer letters."""
+import mimetypes
 import os
 from html import escape
 
-from flask import Blueprint, Response, current_app, send_file
-from flask_jwt_extended import jwt_required
+from flask import Blueprint, Response, current_app, request, send_file
+from flask_jwt_extended import decode_token, jwt_required
+from flask_jwt_extended.exceptions import JWTDecodeError
 
 from app.auth.rbac import current_user
 from app.extensions import db
@@ -14,6 +16,19 @@ from app.models.profiles.student import StudentProfile
 from app.utils.errors import ForbiddenError, NotFoundError
 
 documents_bp = Blueprint("documents", __name__)
+
+
+@documents_bp.before_request
+def _allow_token_in_query_string():
+    """Let document endpoints accept ``?token=<jwt>`` so the browser can
+    navigate directly to the URL (needed for inline PDF viewing).  If present,
+    we inject it into the Authorization header before flask-jwt-extended runs.
+    """
+    token = request.args.get("token")
+    if token and "Authorization" not in request.headers:
+        # Werkzeug headers are immutable on the incoming request, so we use
+        # the environ dict that Flask/Werkzeug reads from.
+        request.environ["HTTP_AUTHORIZATION"] = f"Bearer {token}"
 
 
 @documents_bp.get("/logo/<int:company_id>")
@@ -64,7 +79,15 @@ def resume(student_id):
     path = os.path.join(current_app.config["UPLOAD_FOLDER"], student.resume_path)
     if not os.path.exists(path):
         raise NotFoundError("Resume file is missing")
-    return send_file(path, download_name=student.resume_path)
+    # Determine MIME type from the stored filename so the browser can render
+    # the document inline (e.g. activate its PDF viewer).
+    mime, _ = mimetypes.guess_type(student.resume_path)
+    return send_file(
+        path,
+        mimetype=mime or "application/octet-stream",
+        as_attachment=False,
+        download_name=os.path.basename(student.resume_path),
+    )
 
 
 @documents_bp.get("/offer-letter/<int:placement_id>")

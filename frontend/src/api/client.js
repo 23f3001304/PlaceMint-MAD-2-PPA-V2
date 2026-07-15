@@ -47,17 +47,15 @@ export function qs(params) {
   return encoded ? `?${encoded}` : ''
 }
 
-// Fetch an authenticated document (resume, offer letter) and open it in a new
-// tab. A plain link/window.open can't send the bearer token, hence the blob.
-export async function openDoc(path) {
+// Open an authenticated document (resume, offer letter) in a new browser tab.
+// The backend document endpoints accept a `?token=` query param so the browser
+// can navigate directly to the URL and use its native viewer (PDF, HTML, etc.)
+// without fetch + blob workarounds.
+export function openDoc(path) {
   const token = localStorage.getItem(TOKEN_KEY)
-  const res = await fetch(BASE + path, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
-  if (!res.ok) throw new ApiError('Could not open document', res.status)
-  const url = URL.createObjectURL(await res.blob())
+  const separator = path.includes('?') ? '&' : '?'
+  const url = BASE + path + (token ? `${separator}token=${encodeURIComponent(token)}` : '')
   window.open(url, '_blank')
-  setTimeout(() => URL.revokeObjectURL(url), 60000)
 }
 
 // Fetch an authenticated file and trigger a download with a filename.
