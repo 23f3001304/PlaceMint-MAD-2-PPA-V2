@@ -77,7 +77,7 @@ frontend/
 
 ## ER Diagram
 
-The database schema used by the app is documented in [docs/er-diagram.md](docs/er-diagram.md) and rendered from [docs/sqlite (1).png](docs/sqlite%20(1).png).
+The database schema used by the app is documented in  [docs/sqlite (1).png](docs/sqlite%20(1).png).
 
 ## Getting started
 
