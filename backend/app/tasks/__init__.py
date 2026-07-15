@@ -36,6 +36,6 @@ def make_celery(flask_app) -> Celery:
     celery.set_default()
     flask_app.extensions["celery"] = celery
 
-    from app.tasks import exports, reminders, reports  # noqa: F401  (register tasks)
+    from app.tasks import exports, reminders, reports, mail  # noqa: F401  (register tasks)
 
     return celery
