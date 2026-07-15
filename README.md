@@ -143,7 +143,7 @@ After `seed_demo.py` (all demo passwords are `password123`):
 
 | Role    | Email             | Password    |
 |---------|-------------------|-------------|
-| Admin   | admin@ppa.local   | admin123    |
+| Admin   | coehemang@gmail.com | admin123  |
 | Company | tech@demo.com     | password123 |
 | Student | ada@demo.com      | password123 |
 

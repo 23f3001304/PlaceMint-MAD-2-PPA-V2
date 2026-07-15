@@ -19,7 +19,7 @@ class AppTestCase(unittest.TestCase):
         return {"Authorization": f"Bearer {res.get_json()['data']['token']}"}
 
     def admin(self):
-        return self.hdr("admin@ppa.local", "admin123")
+        return self.hdr("coehemang@gmail.com", "admin123")
 
     # --- fixtures ---------------------------------------------------------
     def register_company(self, email="co@t.com", name="Acme"):

@@ -47,7 +47,7 @@ async function submit() {
       New here? <RouterLink to="/register">Create an account</RouterLink>
     </p>
     <p class="text-center text-muted small mt-2 mb-0 text-mono">
-      demo admin: admin@ppa.local / admin123
+      demo admin: coehemang@gmail.com / admin123
     </p>
   </AuthLayout>
 </template>

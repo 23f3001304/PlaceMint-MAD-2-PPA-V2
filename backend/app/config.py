@@ -43,7 +43,7 @@ class BaseConfig:
     RATELIMIT_ENABLED = True
 
     # Pre-seeded admin.
-    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@ppa.local")
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "coehemang@gmail.com")
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
     # Email.
